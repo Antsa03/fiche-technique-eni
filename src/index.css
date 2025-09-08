@@ -11,13 +11,13 @@
   --card-foreground: oklch(0.25 0.05 195); /* #164e63 - Cyan-800 for headers */
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.35 0 0);
-  --primary: oklch(0.25 0.05 195); /* #164e63 - Professional cyan primary */
+  --primary: oklch(54.895% 0.18786 259.099); /* #164e63 - Professional cyan primary */
   --primary-foreground: oklch(1 0 0); /* White text on primary */
-  --secondary: oklch(0.65 0.15 160); /* #10b981 - Emerald accent */
+  --secondary: oklch(0.6459 0.2247 34.73); /* #10b981 - Emerald accent */
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.98 0 0); /* #f8fafc - Very light gray */
   --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.65 0.15 160); /* #10b981 - Emerald for highlights */
+  --accent: oklch(62.504% 0.14205 258.545); /* #10b981 - Emerald for highlights */
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.55 0.2 25); /* #e53e3e - Error red */
   --destructive-foreground: oklch(1 0 0);

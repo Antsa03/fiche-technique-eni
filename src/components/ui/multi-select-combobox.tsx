@@ -45,14 +45,6 @@ export function MultiSelectCombobox({
     option.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Check if search term is a new option not in the list
-  const isNewOption =
-    searchTerm.trim() &&
-    !options.some(
-      (option) => option.toLowerCase() === searchTerm.toLowerCase()
-    ) &&
-    !value.some((item) => item.toLowerCase() === searchTerm.toLowerCase());
-
   // Calculate dropdown position
   const updateDropdownPosition = () => {
     if (containerRef.current) {
@@ -137,26 +129,12 @@ export function MultiSelectCombobox({
     }, 0);
   };
 
-  const handleAddNew = () => {
-    if (isNewOption && value.length < maxItems) {
-      const newValue = searchTerm.trim();
-      onChange([...value, newValue]);
-      setSearchTerm("");
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
-    }
-  };
-
   const handleRemove = (optionToRemove: string) => {
     onChange(value.filter((item) => item !== optionToRemove));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && isNewOption) {
-      e.preventDefault();
-      handleAddNew();
-    } else if (e.key === "Escape") {
+    if (e.key === "Escape") {
       setIsOpen(false);
       setSearchTerm("");
     }
@@ -181,68 +159,45 @@ export function MultiSelectCombobox({
           e.stopPropagation();
         }}
       >
-        {/* Add new option if search term is new */}
-        {isNewOption && value.length < maxItems && (
-          <div
-            className="px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground border-b border-border bg-muted/50"
-            onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleAddNew();
-            }}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center">
-                <div className="w-2 h-2 bg-primary rounded-full" />
+        {/* Existing options */}
+        {filteredOptions.length > 0 ? (
+          filteredOptions.map((option) => {
+            const isSelected = value.includes(option);
+            const isDisabled = !isSelected && value.length >= maxItems;
+
+            return (
+              <div
+                key={option}
+                className={cn(
+                  "px-3 py-2 text-sm cursor-pointer flex items-center gap-2",
+                  isSelected && "bg-accent text-accent-foreground",
+                  !isSelected && !isDisabled && "hover:bg-accent/50",
+                  isDisabled && "opacity-50 cursor-not-allowed"
+                )}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!isDisabled) {
+                    handleSelect(option);
+                  }
+                }}
+              >
+                <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center">
+                  {isSelected && <Check className="w-3 h-3 text-primary" />}
+                </div>
+                <span>{option}</span>
               </div>
-              <span>Ajouter "{searchTerm.trim()}"</span>
-            </div>
+            );
+          })
+        ) : (
+          <div className="px-3 py-2 text-sm text-muted-foreground">
+            Aucun résultat trouvé
           </div>
         )}
-
-        {/* Existing options */}
-        {filteredOptions.length > 0
-          ? filteredOptions.map((option) => {
-              const isSelected = value.includes(option);
-              const isDisabled = !isSelected && value.length >= maxItems;
-
-              return (
-                <div
-                  key={option}
-                  className={cn(
-                    "px-3 py-2 text-sm cursor-pointer flex items-center gap-2",
-                    isSelected && "bg-accent text-accent-foreground",
-                    !isSelected && !isDisabled && "hover:bg-accent/50",
-                    isDisabled && "opacity-50 cursor-not-allowed"
-                  )}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (!isDisabled) {
-                      handleSelect(option);
-                    }
-                  }}
-                >
-                  <div className="w-4 h-4 rounded border-2 border-primary flex items-center justify-center">
-                    {isSelected && <Check className="w-3 h-3 text-primary" />}
-                  </div>
-                  <span>{option}</span>
-                </div>
-              );
-            })
-          : !isNewOption && (
-              <div className="px-3 py-2 text-sm text-muted-foreground">
-                Aucun résultat trouvé
-              </div>
-            )}
 
         {value.length >= maxItems && (
           <div className="px-3 py-2 text-xs text-muted-foreground bg-muted/30 border-t border-border">

@@ -1,7 +1,10 @@
 import "./App.css";
-import FicheTechniqueForm from "./components/FicheTechniqueForm";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Header from "./components/layouts/Header";
+import Footer from "./components/layouts/Footer";
+import FicheTechniquePage from "./pages/fiche-technique";
+import LoginPage from "./pages/login";
 
 function App() {
   return (
@@ -10,11 +13,35 @@ function App() {
 
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8">
-          <FicheTechniqueForm />
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/fiche-technique" element={<FicheTechniquePage />} />
+          </Routes>
         </div>
       </main>
 
       <Footer />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#fff",
+            color: "#333",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          },
+          success: {
+            style: {
+              border: "1px solid #10b981",
+            },
+          },
+          error: {
+            style: {
+              border: "1px solid #ef4444",
+            },
+          },
+        }}
+      />
     </div>
   );
 }
