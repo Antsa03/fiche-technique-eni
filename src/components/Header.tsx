@@ -7,7 +7,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center border-2 border-gray-200">
               {/* Placeholder pour le logo ENI */}
-              <img src="/src/assets/eni-logo.png" alt="ENI Logo" className="w-16 h-16" />
+              <img src="eni-logo.png" alt="ENI Logo" className="w-16 h-16" />
             </div>
             <div>
               <h1 className="text-xl font-semibold text-gray-900">

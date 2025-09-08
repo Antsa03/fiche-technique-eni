@@ -4,7 +4,6 @@ import {
   MapPin,
   Facebook,
   Linkedin,
-  ExternalLink,
 } from "lucide-react";
 
 export default function Footer() {
@@ -17,7 +16,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center space-x-3 mb-4">
               <img
-                src="/src/assets/eni-logo.png"
+                src="eni-logo.png"
                 alt="ENI Logo"
                 className="w-16 h-16 rounded-full border-2 border-gray-300"
               />
@@ -118,14 +117,7 @@ export default function Footer() {
             </div>
 
             {/* Zone pour la carte améliorée */}
-            <div className="w-full h-32 bg-white rounded-lg border-2 border-gray-300 flex items-center justify-center group hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer shadow-sm">
-              <div className="text-center">
-                <ExternalLink className="w-6 h-6 text-blue-600 mx-auto mb-1" />
-                <span className="text-xs text-gray-600 group-hover:text-blue-700">
-                  Voir sur Google Maps
-                </span>
-              </div>
-            </div>
+           
           </div>
         </div>
 
