@@ -5,6 +5,7 @@ import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
 import FicheTechniquePage from "./pages/fiche-technique";
 import LoginPage from "./pages/login";
+import { ProtectedRoute } from "./components/protected-route";
 
 function App() {
   return (
@@ -15,7 +16,14 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route path="/fiche-technique" element={<FicheTechniquePage />} />
+            <Route
+              path="/fiche-technique"
+              element={
+                <ProtectedRoute>
+                  <FicheTechniquePage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </main>

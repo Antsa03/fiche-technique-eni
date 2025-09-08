@@ -8,9 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { loginSchema, type LoginFormData } from "@/schema/login.schema";
+import { AuthService } from "@/services/auth.service";
 
 export function LoginForm({
   className,
@@ -29,7 +28,6 @@ export function LoginForm({
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
     },
   });
 
@@ -37,28 +35,43 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock authentication logic
-      if (data.email === "admin@eni.fr" && data.password === "password123") {
-        toast.success("Connexion réussie ! Redirection en cours...");
-
-        // Store user data if remember me is checked
-        if (data.rememberMe) {
-          localStorage.setItem("rememberUser", "true");
-          localStorage.setItem("userEmail", data.email);
+      const response = await fetch(
+        "https://practice.api.eni.mg/api/v1/auth/email/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password,
+          }),
         }
+      );
 
-        // Redirect to fiche technique page
-        setTimeout(() => {
-          navigate("/fiche-technique");
-        }, 1000);
-      } else {
-        toast.error("Email ou mot de passe incorrect");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erreur de connexion");
       }
+
+      const authData = await response.json();
+
+      // Stocker les données d'authentification dans localStorage en utilisant AuthService
+      AuthService.setAuthData(authData);
+
+      toast.success("Connexion réussie ! Redirection en cours...");
+
+      // Redirect to fiche technique page
+      setTimeout(() => {
+        navigate("/fiche-technique");
+      }, 1000);
     } catch (error) {
-      toast.error("Une erreur est survenue. Veuillez réessayer.");
+      console.error("Erreur de connexion:", error);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Email ou mot de passe incorrect"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -146,22 +159,6 @@ export function LoginForm({
             "Se connecter"
           )}
         </Button>
-      </div>
-
-      {/* Support */}
-      <div className="text-center">
-        <button
-          type="button"
-          className="text-xs text-muted-foreground hover:text-primary transition-colors"
-          onClick={() =>
-            toast("Support IT : support@eni.fr", {
-              icon: "📧",
-              duration: 3000,
-            })
-          }
-        >
-          Besoin d'aide ? Contactez le support
-        </button>
       </div>
     </form>
   );

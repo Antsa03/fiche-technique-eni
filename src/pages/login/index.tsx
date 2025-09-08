@@ -1,6 +1,17 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthService } from "@/services/auth.service";
 import { LoginForm } from "./_components/login-form";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Rediriger vers /fiche-technique si l'utilisateur est déjà connecté
+    if (AuthService.isAuthenticated()) {
+      navigate("/fiche-technique", { replace: true });
+    }
+  }, [navigate]);
   return (
     <div className="min-h-screen">
       <div className="flex min-h-screen">
