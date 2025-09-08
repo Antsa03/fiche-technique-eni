@@ -45,7 +45,7 @@ export const resetEncadreurFields = (setValue: any) => {
 
 export const getFormDefaultValues = (): FormData => ({
   etablissement: {
-    type: "nouveau",
+    type: "existant",
     etablissementExistantId: "",
     sigle: "",
     raisonSociale: "",
@@ -53,7 +53,7 @@ export const getFormDefaultValues = (): FormData => ({
     adressePostale: "",
   },
   encadreur: {
-    type: "nouveau",
+    type: "existant",
     encadreurExistantId: "",
     nom: "",
     prenoms: "",

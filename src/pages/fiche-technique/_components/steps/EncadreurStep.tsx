@@ -1,12 +1,6 @@
 import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import { ENCADREURS_EXISTANTS } from "@/data/encadreur-pro.data";
 import { FormField } from "../form/FormField";
 import type { StepContentProps } from "../../types/form.types";
@@ -40,22 +34,22 @@ export const EncadreurStep = ({
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   type="radio"
-                  value="nouveau"
-                  checked={field.value === "nouveau"}
-                  onChange={() => onEncadreurTypeChange("nouveau")}
-                  className="text-blue-600"
-                />
-                <span className="text-sm">Nouvel encadreur</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="radio"
                   value="existant"
                   checked={field.value === "existant"}
                   onChange={() => onEncadreurTypeChange("existant")}
                   className="text-blue-600"
                 />
                 <span className="text-sm">Encadreur existant</span>
+              </label>
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="nouveau"
+                  checked={field.value === "nouveau"}
+                  onChange={() => onEncadreurTypeChange("nouveau")}
+                  className="text-blue-600"
+                />
+                <span className="text-sm">Nouvel encadreur</span>
               </label>
             </div>
           )}
@@ -73,45 +67,21 @@ export const EncadreurStep = ({
             control={control}
             render={({ field, fieldState }) => (
               <div>
-                <Select
+                <SearchableSelect
+                  options={ENCADREURS_EXISTANTS.map((encadreur) => ({
+                    value: encadreur.id,
+                    label: `${encadreur.prenoms} ${encadreur.nom}`,
+                    description: `${encadreur.etablissement} - ${encadreur.email}`,
+                  }))}
+                  value={field.value}
                   onValueChange={(value) => {
                     field.onChange(value);
                     onEncadreurExistantChange(value);
                   }}
-                  value={field.value}
-                >
-                  <SelectTrigger
-                    className={`
-                      px-4 py-3 text-sm border-2 rounded-lg transition-all duration-200
-                      bg-white hover:bg-gray-50 focus:bg-white
-                      focus:outline-none focus:ring-0
-                      ${
-                        fieldState.error
-                          ? "border-red-300 focus:border-red-500 shadow-red-100 focus:shadow-red-200"
-                          : "border-gray-200 focus:border-blue-500 hover:border-gray-300 focus:shadow-blue-100"
-                      }
-                      ${
-                        fieldState.error ? "focus:shadow-lg" : "focus:shadow-md"
-                      }
-                    `}
-                  >
-                    <SelectValue placeholder="Choisir un encadreur..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ENCADREURS_EXISTANTS.map((encadreur) => (
-                      <SelectItem key={encadreur.id} value={encadreur.id}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">
-                            {encadreur.prenoms} {encadreur.nom}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {encadreur.etablissement} - {encadreur.email}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  placeholder="Choisir un encadreur..."
+                  searchPlaceholder="Rechercher un encadreur..."
+                  error={!!fieldState.error}
+                />
                 {fieldState.error && (
                   <p className="text-xs text-red-500 mt-1">
                     {fieldState.error.message}

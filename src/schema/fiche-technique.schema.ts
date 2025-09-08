@@ -93,10 +93,10 @@ const sujetSchema = z.object({
   theme: z.string().min(5, "Le thème doit contenir au moins 5 caractères"),
   objectif: z
     .string()
-    .min(20, "L'objectif doit être détaillé (minimum 20 caractères)"),
+    .min(10, "L'objectif doit être détaillé (minimum 10 caractères)"),
   descriptif: z
     .string()
-    .min(50, "Le descriptif doit être détaillé (minimum 50 caractères)"),
+    .min(10, "Le descriptif doit être détaillé (minimum 10 caractères)"),
 });
 
 const aspectTechniqueSchema = z.object({
