@@ -20,11 +20,11 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
   // Surveiller le niveau d'étude pour ajuster les contraintes
   const niveau = useWatch({
     control,
-    name: "étudiant.niveau",
+    name: "stagiaire.niveau",
   });
 
-  // Fonction pour obtenir le nombre maximum de étudiants selon le niveau
-  const getMaxétudiants = (niveauEtude: string): number => {
+  // Fonction pour obtenir le nombre maximum de stagiaires selon le niveau
+  const getMaxStagiaires = (niveauEtude: string): number => {
     switch (niveauEtude) {
       case "L1":
         return 5;
@@ -45,21 +45,21 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
   const getHelpText = (niveauEtude: string): string => {
     switch (niveauEtude) {
       case "L1":
-        return "💡 Maximum 5 étudiants pour le niveau L1.";
+        return "💡 Maximum 5 stagiaires pour le niveau L1.";
       case "L2":
-        return "💡 Maximum 2 étudiants pour le niveau L2.";
+        return "💡 Maximum 2 stagiaires pour le niveau L2.";
       case "L3":
-        return "💡 1 seul étudiant autorisé pour le niveau L3.";
+        return "💡 1 seul stagiaire autorisé pour le niveau L3.";
       case "M1":
-        return "💡 Maximum 4 étudiants pour le niveau M1.";
+        return "💡 Maximum 4 stagiaires pour le niveau M1.";
       case "M2":
-        return "💡 1 seul étudiant autorisé pour le niveau M2.";
+        return "💡 1 seul stagiaire autorisé pour le niveau M2.";
       default:
         return "💡 Veuillez d'abord sélectionner un niveau d'étude.";
     }
   };
 
-  const maxétudiants = niveau ? getMaxétudiants(niveau) : 5;
+  const maxStagiaires = niveau ? getMaxStagiaires(niveau) : 5;
   const helpText = getHelpText(niveau);
 
   return (
@@ -69,7 +69,7 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
           Niveau d'étude <span className="text-secondary">*</span>
         </Label>
         <Controller
-          name="étudiant.niveau"
+          name="stagiaire.niveau"
           control={control}
           render={({ field, fieldState }) => (
             <div>
@@ -112,7 +112,7 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
           Parcours <span className="text-secondary">*</span>
         </Label>
         <Controller
-          name="étudiant.parcours"
+          name="stagiaire.parcours"
           control={control}
           render={({ field, fieldState }) => (
             <div>
@@ -154,10 +154,10 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
 
       <div className="space-y-2">
         <Label className="text-sm font-medium text-foreground">
-          Liste des étudiants <span className="text-secondary ml-1">*</span>
+          Liste des stagiaires <span className="text-secondary ml-1">*</span>
         </Label>
         <Controller
-          name="étudiant.étudiants"
+          name="stagiaire.stagiaires"
           control={control}
           render={({ field, fieldState }) => (
             <div>
@@ -166,20 +166,20 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
                 value={field.value}
                 onChange={(newValue) => {
                   // Limiter le nombre selon le niveau sélectionné
-                  const limitedValue = newValue.slice(0, maxétudiants);
+                  const limitedValue = newValue.slice(0, maxStagiaires);
                   const filteredValue = limitedValue.filter(
                     (item) => item.trim().length > 0
                   );
                   field.onChange(filteredValue);
-                  setTimeout(() => trigger("étudiant.étudiants"), 100);
+                  setTimeout(() => trigger("stagiaire.stagiaires"), 100);
                 }}
                 placeholder={
                   niveau
-                    ? "Sélectionner les étudiants étudiants..."
+                    ? "Sélectionner les étudiants stagiaires..."
                     : "Veuillez d'abord sélectionner un niveau d'étude"
                 }
                 searchPlaceholder="Rechercher un étudiant..."
-                maxItems={maxétudiants}
+                maxItems={maxStagiaires}
                 error={!!fieldState.error}
               />
               {fieldState.error && (
