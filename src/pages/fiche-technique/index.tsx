@@ -6,13 +6,14 @@ import { Stepper } from "./_components/stepper/Stepper";
 import { FormActions } from "./_components/form/FormActions";
 import { EtablissementStep } from "./_components/steps/EtablissementStep";
 import { EncadreurStep } from "./_components/steps/EncadreurStep";
-import { StagiaireStep } from "./_components/steps/StagiaireStep";
+
 import { SujetStep } from "./_components/steps/SujetStep";
 import { AspectTechniqueStep } from "./_components/steps/AspectTechniqueStep";
 import { RecapitulatifStep } from "./_components/steps/RecapitulatifStep";
 import { useFormValidation } from "./hooks/useFormValidation";
 import { useFormNavigation } from "./hooks/useFormNavigation";
 import { useFormHandlers } from "./hooks/useFormHandlers";
+import { StagiaireStep } from "./_components/steps/StagiaireStep";
 
 export default function FicheTechniquePage() {
   // Form setup

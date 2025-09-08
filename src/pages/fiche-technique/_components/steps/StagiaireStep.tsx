@@ -11,7 +11,7 @@ import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
 import { etudiants, formatEtudiantWithMatricule } from "@/data/etudiant.data";
 import type { StepContentProps } from "../../types/form.types";
 
-export const étudiantStep = ({ control, trigger }: StepContentProps) => {
+export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
   // Préparer les options pour le MultiSelectCombobox
   const etudiantOptions = etudiants.map((etudiant) =>
     formatEtudiantWithMatricule(etudiant)
