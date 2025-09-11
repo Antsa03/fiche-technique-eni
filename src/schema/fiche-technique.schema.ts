@@ -75,22 +75,90 @@ const encadreurSchema = z
     }
   );
 
-const stagiaireSchema = z.object({
-  niveau: z.string().min(1, "Veuillez sélectionner un niveau d'étude"),
-  parcours: z.string().min(1, "Veuillez sélectionner un parcours"),
-  stagiaires: z
-    .array(z.string())
-    .transform((arr) => arr.filter((item) => item.trim().length > 0))
-    .refine((arr) => arr.length >= 1, "Au moins un stagiaire est requis")
-    .refine((arr) => arr.length <= 5, "Maximum 5 stagiaires autorisés")
-    .refine(
-      (arr) => arr.every((item) => item.length >= 3),
-      "Chaque nom doit contenir au moins 3 caractères"
-    ),
-});
+const stagiaireSchema = z
+  .object({
+    niveau: z.string().min(1, "Veuillez sélectionner un niveau d'étude"),
+    parcours: z.string().min(1, "Veuillez sélectionner un parcours"),
+    stagiaires: z
+      .array(z.string())
+      .transform((arr) => arr.filter((item) => item.trim().length > 0))
+      .refine(
+        (arr) => arr.every((item) => item.length >= 3),
+        "Chaque nom doit contenir au moins 3 caractères"
+      ),
+  })
+  .refine(
+    (data) => {
+      const { niveau, stagiaires } = data;
+
+      // Définir les contraintes min/max par niveau
+      const constraints: Record<string, { min: number; max: number }> = {
+        L1: { min: 4, max: 5 },
+        L2: { min: 1, max: 2 },
+        L3: { min: 1, max: 1 },
+        M1: { min: 3, max: 4 },
+        M2: { min: 1, max: 1 },
+      };
+
+      if (!niveau || !constraints[niveau]) {
+        return stagiaires.length >= 1 && stagiaires.length <= 5;
+      }
+
+      const { min, max } = constraints[niveau];
+      return stagiaires.length >= min && stagiaires.length <= max;
+    },
+    (data) => {
+      const { niveau, stagiaires } = data;
+
+      const constraints: Record<string, { min: number; max: number }> = {
+        L1: { min: 4, max: 5 },
+        L2: { min: 1, max: 2 },
+        L3: { min: 1, max: 1 },
+        M1: { min: 3, max: 4 },
+        M2: { min: 1, max: 1 },
+      };
+
+      if (!niveau || !constraints[niveau]) {
+        if (stagiaires.length < 1)
+          return {
+            message: "Au moins un stagiaire est requis",
+            path: ["stagiaires"],
+          };
+        if (stagiaires.length > 5)
+          return {
+            message: "Maximum 5 stagiaires autorisés",
+            path: ["stagiaires"],
+          };
+        return { message: "Erreur de validation", path: ["stagiaires"] };
+      }
+
+      const { min, max } = constraints[niveau];
+
+      if (stagiaires.length < min) {
+        return {
+          message: `Au moins ${min} stagiaire${min > 1 ? "s" : ""} ${
+            min > 1 ? "sont" : "est"
+          } requis pour le niveau ${niveau}`,
+          path: ["stagiaires"],
+        };
+      }
+
+      if (stagiaires.length > max) {
+        return {
+          message: `Maximum ${max} stagiaire${max > 1 ? "s" : ""} autorisé${
+            max > 1 ? "s" : ""
+          } pour le niveau ${niveau}`,
+          path: ["stagiaires"],
+        };
+      }
+
+      return { message: "Erreur de validation", path: ["stagiaires"] };
+    }
+  );
 
 const sujetSchema = z.object({
   theme: z.string().min(5, "Le thème doit contenir au moins 5 caractères"),
+  orientation: z.string().min(1, "Veuillez sélectionner une orientation"),
   objectif: z
     .string()
     .min(10, "L'objectif doit être détaillé (minimum 10 caractères)"),

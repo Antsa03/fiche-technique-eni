@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "@/schema/login.schema";
 import { AuthService } from "@/services/auth.service";
+import { LOGIN_URL } from "@/lib/api-url";
 
 export function LoginForm({
   className,
@@ -36,7 +37,7 @@ export function LoginForm({
 
     try {
       const response = await fetch(
-        "https://practice.api.eni.mg/api/v1/auth/email/login",
+        LOGIN_URL,
         {
           method: "POST",
           headers: {

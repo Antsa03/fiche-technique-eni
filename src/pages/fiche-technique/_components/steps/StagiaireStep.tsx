@@ -41,17 +41,35 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
     }
   };
 
+  // Fonction pour obtenir le nombre minimum de stagiaires selon le niveau
+  const getMinStagiaires = (niveauEtude: string): number => {
+    switch (niveauEtude) {
+      case "L1":
+        return 4;
+      case "L2":
+        return 1;
+      case "L3":
+        return 1;
+      case "M1":
+        return 3;
+      case "M2":
+        return 1;
+      default:
+        return 1; // Par défaut
+    }
+  };
+
   // Fonction pour obtenir le texte d'aide selon le niveau
   const getHelpText = (niveauEtude: string): string => {
     switch (niveauEtude) {
       case "L1":
-        return "💡 Maximum 5 stagiaires pour le niveau L1.";
+        return "💡 Entre 4 et 5 stagiaires requis pour le niveau L1.";
       case "L2":
         return "💡 Maximum 2 stagiaires pour le niveau L2.";
       case "L3":
         return "💡 1 seul stagiaire autorisé pour le niveau L3.";
       case "M1":
-        return "💡 Maximum 4 stagiaires pour le niveau M1.";
+        return "💡 Entre 3 et 4 stagiaires requis pour le niveau M1.";
       case "M2":
         return "💡 1 seul stagiaire autorisé pour le niveau M2.";
       default:
@@ -60,6 +78,7 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
   };
 
   const maxStagiaires = niveau ? getMaxStagiaires(niveau) : 5;
+  const minStagiaires = niveau ? getMinStagiaires(niveau) : 1;
   const helpText = getHelpText(niveau);
 
   return (
@@ -185,6 +204,23 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
               {fieldState.error && (
                 <p className="text-sm text-secondary mt-1">
                   {fieldState.error.message}
+                </p>
+              )}
+              {/* Validation message pour les contraintes min/max */}
+              {niveau && field.value && (
+                <p
+                  className={`text-xs mt-1 ${
+                    field.value.length < minStagiaires ||
+                    field.value.length > maxStagiaires
+                      ? "text-red-600"
+                      : "text-green-600"
+                  }`}
+                >
+                  {field.value.length < minStagiaires
+                    ? `⚠️ Au moins ${minStagiaires} stagiaire(s) requis pour ${niveau}`
+                    : field.value.length > maxStagiaires
+                    ? `⚠️ Maximum ${maxStagiaires} stagiaire(s) autorisé(s) pour ${niveau}`
+                    : `✅ Nombre de stagiaires valide (${field.value.length}/${maxStagiaires})`}
                 </p>
               )}
               <p className="text-xs text-muted-foreground mt-1">{helpText}</p>
