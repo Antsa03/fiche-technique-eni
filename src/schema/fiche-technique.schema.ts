@@ -4,19 +4,19 @@ const etablissementSchema = z
   .object({
     type: z.enum(["nouveau", "existant"]),
     etablissementExistantId: z.string().optional(),
-    sigle: z
+    sigle_ea: z
       .string()
       .min(2, "Le sigle doit contenir au moins 2 caractères")
       .optional(),
-    raisonSociale: z
+      raison_sociale: z
       .string()
       .min(3, "La raison sociale doit contenir au moins 3 caractères")
       .optional(),
-    email: z
+      email_ea: z
       .string()
       .email("Veuillez saisir une adresse email valide")
       .optional(),
-    adressePostale: z
+      adresse_ea: z
       .string()
       .min(10, "L'adresse doit être complète (minimum 10 caractères)")
       .optional(),
@@ -27,10 +27,10 @@ const etablissementSchema = z
         return !!data.etablissementExistantId;
       } else {
         return !!(
-          data.sigle &&
-          data.raisonSociale &&
-          data.email &&
-          data.adressePostale
+          data.sigle_ea &&
+          data.raison_sociale &&
+          data.email_ea &&
+          data.adresse_ea
         );
       }
     },
@@ -191,3 +191,9 @@ export {
   stagiaireSchema,
   sujetSchema,
 };
+
+export type EtablissementType = z.infer<typeof etablissementSchema>;
+export type EncadreurType = z.infer<typeof encadreurSchema>;
+export type StagiaireType = z.infer<typeof stagiaireSchema>;
+export type SujetType = z.infer<typeof sujetSchema>;
+export type AspectTechniqueType = z.infer<typeof aspectTechniqueSchema>;

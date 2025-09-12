@@ -2,9 +2,11 @@ import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { ETABLISSEMENTS_EXISTANTS } from "@/data/etablissement.data";
 import { FormField } from "../form/FormField";
 import type { StepContentProps } from "../../types/form.types";
+import { useEffect, useState } from "react";
+import { getEtablissementAccueil } from "@/services/api";
+import type { EtablissementType } from "@/schema/fiche-technique.schema";
 
 interface EtablissementStepProps extends StepContentProps {
   etablissementType: string;
@@ -20,6 +22,20 @@ export const EtablissementStep = ({
   onEtablissementTypeChange,
   onEtablissementExistantChange,
 }: EtablissementStepProps) => {
+  const [etablissementAccueils, setEtablissementAccueils] = useState<EtablissementType[]>([]);
+  useEffect(() => {
+    const fetchEtablissementAccueils = async () => {
+      try {
+        const response = await getEtablissementAccueil(1000);
+        const etablissementAccueilsData = response.data?.data || [];
+        setEtablissementAccueils(etablissementAccueilsData);
+      } catch (err) {
+        console.error('Failed to fetch établissements:', err);
+      }
+    };
+
+    fetchEtablissementAccueils();
+  }, []);
   return (
     <div className="space-y-3">
       {/* Switcher Nouveau/Existant */}
@@ -70,10 +86,10 @@ export const EtablissementStep = ({
             render={({ field, fieldState }) => (
               <div>
                 <SearchableSelect
-                  options={ETABLISSEMENTS_EXISTANTS.map((etablissement) => ({
-                    value: etablissement.id,
-                    label: etablissement.sigle,
-                    description: etablissement.raisonSociale,
+                  options={etablissementAccueils.map((etablissement) => ({
+                    value: etablissement.sigle_ea,
+                    label: etablissement.raison_sociale,
+                    description: etablissement.raison_sociale + '' + etablissement.adresse_ea,
                   }))}
                   value={field.value}
                   onValueChange={(value) => {
@@ -137,26 +153,26 @@ export const EtablissementStep = ({
             Informations de l'établissement :
           </h4>
           {(() => {
-            const etablissement = ETABLISSEMENTS_EXISTANTS.find(
-              (e) => e.id === etablissementExistantId
+            const etablissement = etablissementAccueils.find(
+              (e) => e.sigle_ea === etablissementExistantId
             );
             return etablissement ? (
               <div className="space-y-1 text-xs text-blue-800">
                 <p>
                   <span className="font-medium">Sigle:</span>{" "}
-                  {etablissement.sigle}
+                  {etablissement.sigle_ea}
                 </p>
                 <p>
                   <span className="font-medium">Raison sociale:</span>{" "}
-                  {etablissement.raisonSociale}
+                  {etablissement.raison_sociale}
                 </p>
                 <p>
                   <span className="font-medium">Email:</span>{" "}
-                  {etablissement.email}
+                  {etablissement.email_ea}
                 </p>
                 <p>
                   <span className="font-medium">Adresse:</span>{" "}
-                  {etablissement.adressePostale}
+                  {etablissement.adresse_ea}
                 </p>
               </div>
             ) : null;

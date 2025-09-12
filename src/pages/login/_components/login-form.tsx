@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { loginSchema, type LoginFormData } from "@/schema/login.schema";
 import { AuthService } from "@/services/auth.service";
-import { LOGIN_URL } from "@/lib/api-url";
+import { login } from "@/services/api";
 
 export function LoginForm({
   className,
@@ -36,26 +36,8 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        LOGIN_URL,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: data.email,
-            password: data.password,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Erreur de connexion");
-      }
-
-      const authData = await response.json();
+      const response = await login(data)
+      const authData = await response.data;
 
       // Stocker les données d'authentification dans localStorage en utilisant AuthService
       AuthService.setAuthData(authData);

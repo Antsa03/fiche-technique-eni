@@ -4,8 +4,8 @@ import { Check, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Option {
-  value: string;
-  label: string;
+  value?: string;
+  label?: string;
   description?: string;
 }
 
@@ -45,7 +45,7 @@ export function SearchableSelect({
 
   const filteredOptions = options.filter(
     (option) =>
-      option.label.toLowerCase().includes(searchValue.toLowerCase()) ||
+      option.label?.toLowerCase().includes(searchValue.toLowerCase()) ||
       (option.description &&
         option.description.toLowerCase().includes(searchValue.toLowerCase()))
   );
@@ -221,7 +221,7 @@ export function SearchableSelect({
                 filteredOptions.map((option) => (
                   <div
                     key={option.value}
-                    onClick={() => handleSelect(option.value)}
+                    onClick={() => handleSelect(option.value || '')}
                     className={cn(
                       "flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-100 transition-colors border-b border-gray-50 last:border-b-0",
                       value === option.value && "bg-blue-50 hover:bg-blue-100"
