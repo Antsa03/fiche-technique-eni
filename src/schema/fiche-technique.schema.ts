@@ -1,3 +1,4 @@
+import type { User } from "@/services/auth.service";
 import z from "zod";
 
 const etablissementSchema = z
@@ -44,21 +45,29 @@ const encadreurSchema = z
   .object({
     type: z.enum(["nouveau", "existant"]),
     encadreurExistantId: z.string().optional(),
-    nom: z
+    id: z
       .string()
-      .min(2, "Le nom doit contenir au moins 2 caractères")
+      .min(2, "Erreur sur l id enc pro")
       .optional(),
-    prenoms: z
-      .string()
-      .min(2, "Les prénoms doivent contenir au moins 2 caractères")
-      .optional(),
-    email: z
-      .string()
-      .email("Veuillez saisir une adresse email valide")
-      .optional(),
-    telephone: z
-      .string()
-      .min(8, "Le numéro de téléphone doit contenir au moins 8 chiffres")
+    user: z
+      .object({
+        nom: z
+          .string()
+          .min(2, "Le nom doit contenir au moins 2 caractères")
+          .optional(),
+        prenoms: z
+          .string()
+          .min(2, "Les prénoms doivent contenir au moins 2 caractères")
+          .optional(),
+        email: z
+          .string()
+          .email("Veuillez saisir une adresse email valide")
+          .optional(),
+        contact: z
+          .string()
+          .min(8, "Le numéro de téléphone doit contenir au moins 8 chiffres")
+          .optional(),
+      })
       .optional(),
   })
   .refine(
@@ -66,12 +75,17 @@ const encadreurSchema = z
       if (data.type === "existant") {
         return !!data.encadreurExistantId;
       } else {
-        return !!(data.nom && data.prenoms && data.email && data.telephone);
+        return !!(
+          data.user?.nom &&
+          data.user?.prenoms &&
+          data.user?.email &&
+          data.user?.contact
+        );
       }
     },
     {
       message: "Veuillez compléter tous les champs requis",
-      path: ["nom"],
+      path: ["user"],
     }
   );
 
@@ -200,4 +214,8 @@ export type AspectTechniqueType = z.infer<typeof aspectTechniqueSchema>;
 export interface SpecialiteTheme {
   code_specialite: string,
   description_specialite: string,
+}
+export interface EncadreurProAPI {
+  id: string,
+  user: User,
 }

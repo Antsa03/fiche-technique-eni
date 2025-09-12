@@ -83,9 +83,11 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
 
   return (
     <div className="space-y-3">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div className="space-y-2">
         <Label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-          Niveau d'étude <span className="text-secondary">*</span>
+          Niveau <span className="text-secondary">*</span>
         </Label>
         <Controller
           name="stagiaire.niveau"
@@ -158,7 +160,21 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
                   <SelectItem value="ASR">
                     ASR - Administration Système et Réseaux
                   </SelectItem>
-                  <SelectItem value="IG">IG - Informatique Générale</SelectItem>
+                  <SelectItem value="IG">
+                    IG - Informatique Générale
+                  </SelectItem>
+                  <SelectItem value="GID">
+                    GID - Gouvernance Ingénierie de Données
+                  </SelectItem>
+                  <SelectItem value="OCC">
+                    OCC - Objets Connectés et Cyber Sécurité
+                  </SelectItem>
+                  <SelectItem value="ASI">
+                    ASI - Audit des Systèmes d’Informations
+                  </SelectItem>
+                  <SelectItem value="MDi">
+                    MDi - Métiers du Digital
+                  </SelectItem>
                 </SelectContent>
               </Select>
               {fieldState.error && (
@@ -170,10 +186,11 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
           )}
         />
       </div>
+      </div>
 
       <div className="space-y-2">
         <Label className="text-sm font-medium text-foreground">
-          Liste des stagiaires <span className="text-secondary ml-1">*</span>
+          Liste de(s) stagiaire(s) <span className="text-secondary ml-1">*</span>
         </Label>
         <Controller
           name="stagiaire.stagiaires"

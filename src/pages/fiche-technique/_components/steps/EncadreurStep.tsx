@@ -1,10 +1,9 @@
 import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
-import { ENCADREURS_EXISTANTS } from "@/data/encadreur-pro.data";
 import { FormField } from "../form/FormField";
 import type { StepContentProps } from "../../types/form.types";
-import type { EncadreurType } from "@/schema/fiche-technique.schema";
+import type { EncadreurProAPI, EncadreurType } from "@/schema/fiche-technique.schema";
 import { useEffect, useState } from "react";
 import { getEncadreurPro } from "@/services/api";
 
@@ -33,7 +32,7 @@ export const EncadreurStep = ({
         console.error('Failed to fetch encadreur pro:', err);
       }
     };
-    // fetchEncadreurPro();
+    fetchEncadreurPro();
   }, []);
   return (
     <div className="space-y-3">
@@ -84,10 +83,10 @@ export const EncadreurStep = ({
             render={({ field, fieldState }) => (
               <div>
                 <SearchableSelect
-                  options={ENCADREURS_EXISTANTS.map((encadreur) => ({
+                  options={encadreurPros.map((encadreur) => ({
                     value: encadreur.id,
-                    label: `${encadreur.prenoms} ${encadreur.nom}`,
-                    description: `${encadreur.etablissement} - ${encadreur.email}`,
+                    label: `${encadreur.user?.nom} ${encadreur.user?.nom}`,
+                    description: `${encadreur.user?.contact} - ${encadreur.user?.email}`,
                   }))}
                   value={field.value}
                   onValueChange={(value) => {
@@ -116,7 +115,7 @@ export const EncadreurStep = ({
             <FormField
               control={control}
               name="encadreur.nom"
-              label="Nom de famille"
+              label="Nom"
               placeholder="Nom"
             />
             <FormField
@@ -149,28 +148,24 @@ export const EncadreurStep = ({
             Informations de l'encadreur :
           </h4>
           {(() => {
-            const encadreur = ENCADREURS_EXISTANTS.find(
+            const encadreur = encadreurPros.find(
               (e) => e.id === encadreurExistantId
             );
             return encadreur ? (
               <div className="space-y-1 text-xs text-green-800">
                 <p>
-                  <span className="font-medium">Nom:</span> {encadreur.nom}
+                  <span className="font-medium">Nom:</span> {encadreur.user?.nom}
                 </p>
                 <p>
                   <span className="font-medium">Prénom(s):</span>{" "}
-                  {encadreur.prenoms}
+                  {encadreur.user?.prenoms}
                 </p>
                 <p>
-                  <span className="font-medium">Email:</span> {encadreur.email}
+                  <span className="font-medium">Email:</span> {encadreur.user?.email}
                 </p>
                 <p>
                   <span className="font-medium">Téléphone:</span>{" "}
-                  {encadreur.telephone}
-                </p>
-                <p>
-                  <span className="font-medium">Établissement:</span>{" "}
-                  {encadreur.etablissement}
+                  {encadreur.user?.contact}
                 </p>
               </div>
             ) : null;
