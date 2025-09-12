@@ -3,15 +3,30 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { FormField } from "../form/FormField";
-import { orientations } from "@/data/orientation.data";
 import type { StepContentProps } from "../../types/form.types";
+import { useEffect, useState } from "react";
+import { getSpecialite } from "@/services/api";
+import type {SpecialiteTheme } from "@/schema/fiche-technique.schema";
 
 export const SujetStep = ({ control }: StepContentProps) => {
   // Préparer les options pour le SearchableSelect
-  const orientationOptions = orientations.map((orientation) => ({
-    value: orientation.value,
-    label: orientation.label,
-    description: orientation.description,
+  const [specialites, setSpecialites] = useState<SpecialiteTheme[]>([]);
+  useEffect(() => {
+    const fetchEncadreurPro = async () => {
+      try {
+        const response = await getSpecialite(100);
+        const encadreurProsData = response.data?.data || [];
+        setSpecialites(encadreurProsData);
+      } catch (err) {
+        console.error('Failed to fetch encadreur pro:', err);
+      }
+    };
+    fetchEncadreurPro();
+  }, []);
+  const orientationOptions = specialites.map((orientation) => ({
+    value: orientation.code_specialite,
+    label: orientation.code_specialite,
+    description: orientation.description_specialite,
   }));
 
   return (

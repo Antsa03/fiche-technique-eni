@@ -197,3 +197,7 @@ export type EncadreurType = z.infer<typeof encadreurSchema>;
 export type StagiaireType = z.infer<typeof stagiaireSchema>;
 export type SujetType = z.infer<typeof sujetSchema>;
 export type AspectTechniqueType = z.infer<typeof aspectTechniqueSchema>;
+export interface SpecialiteTheme {
+  code_specialite: string,
+  description_specialite: string,
+}

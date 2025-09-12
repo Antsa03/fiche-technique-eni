@@ -26,7 +26,7 @@ export const EtablissementStep = ({
   useEffect(() => {
     const fetchEtablissementAccueils = async () => {
       try {
-        const response = await getEtablissementAccueil(1000);
+        const response = await getEtablissementAccueil(2000);
         const etablissementAccueilsData = response.data?.data || [];
         setEtablissementAccueils(etablissementAccueilsData);
       } catch (err) {

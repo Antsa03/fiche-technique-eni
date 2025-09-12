@@ -4,6 +4,9 @@ import { SearchableSelect } from "@/components/ui/searchable-select";
 import { ENCADREURS_EXISTANTS } from "@/data/encadreur-pro.data";
 import { FormField } from "../form/FormField";
 import type { StepContentProps } from "../../types/form.types";
+import type { EncadreurType } from "@/schema/fiche-technique.schema";
+import { useEffect, useState } from "react";
+import { getEncadreurPro } from "@/services/api";
 
 interface EncadreurStepProps extends StepContentProps {
   encadreurType: string;
@@ -19,6 +22,19 @@ export const EncadreurStep = ({
   onEncadreurTypeChange,
   onEncadreurExistantChange,
 }: EncadreurStepProps) => {
+  const [encadreurPros, setEncadreurPros] = useState<EncadreurType[]>([]);
+  useEffect(() => {
+    const fetchEncadreurPro = async () => {
+      try {
+        const response = await getEncadreurPro(1000);
+        const encadreurProsData = response.data?.data || [];
+        setEncadreurPros(encadreurProsData);
+      } catch (err) {
+        console.error('Failed to fetch encadreur pro:', err);
+      }
+    };
+    // fetchEncadreurPro();
+  }, []);
   return (
     <div className="space-y-3">
       {/* Switcher Nouveau/Existant */}
