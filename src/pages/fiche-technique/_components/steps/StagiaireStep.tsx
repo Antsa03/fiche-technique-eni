@@ -61,7 +61,8 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
           selectedNiveau,
           ANNEE_UNIVERSITAIRE_ACTUELLE,
           selectedParcours,
-          searchEtudiant
+          searchEtudiant,
+          'SFT'
         );
         
         const inscriptionsData = response.data?.data || [];        

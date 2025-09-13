@@ -20,6 +20,13 @@ const etablissementSchema = z
       .string()
       .min(10, "L'adresse doit être complète (minimum 10 caractères)")
       .optional(),
+      contact_ea: z
+      .string()
+      .min(10, "Le contact doit être complète (minimum 10 caractères)")
+      .optional(),
+      site_web_ea: z
+      .string()
+      .optional(),
   })
   .refine(
     (data) => {
@@ -30,7 +37,9 @@ const etablissementSchema = z
           data.sigle_ea &&
           data.raison_sociale &&
           data.email_ea &&
-          data.adresse_ea
+          data.adresse_ea &&
+          data.contact_ea &&
+          data.site_web_ea
         );
       }
     },

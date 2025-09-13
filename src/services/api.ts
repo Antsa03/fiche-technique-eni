@@ -86,12 +86,13 @@ export const getSpecialite = async (limit?: number, page?: number)=>{
 
   return api.get(url);
 }
-export const getEncadreurPro = async (limit?: number, page?: number)=>{
+export const getEncadreurPro = async (limit?: number, page?: number, id?: string)=>{
   let url = '/v1/encadreur/professionnel';
 
   const params = [];
   if (limit) params.push(`limit=${limit}`);
   if (page) params.push(`page=${page}`);
+  if (id) params.push(`id=${id}`);
   if (params.length > 0) url += `?${params.join('&')}`;
 
   return api.get(url);
@@ -102,7 +103,8 @@ export const getInscriptions = async (
     niveau?: string,
     anne_univ?: string,
     parcours?: string,
-    etudiant?: string
+    etudiant?: string,
+    etat_formation_pratique?: string,
   ) => {
   let url = '/v1/inscriptions';  
   
@@ -113,6 +115,7 @@ export const getInscriptions = async (
   if (niveau) params.push(`niveau=${niveau}`);
   if (anne_univ) params.push(`annee_univ=${anne_univ}`);
   if (etudiant) params.push(`etudiant=${etudiant}`);
+  if (etat_formation_pratique) params.push(`etat_formation_pratique=${etat_formation_pratique}`);
   if (params.length > 0) url += `?${params.join('&')}`;
 
   return api.get(url);

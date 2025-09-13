@@ -9,32 +9,33 @@ import {
   Eye,
   Shield,
 } from "lucide-react";
-import { ENCADREURS_EXISTANTS } from "@/data/encadreur-pro.data";
 import type { StepContentProps } from "../../types/form.types";
 import { useEffect, useState } from "react";
-import type { EtablissementType } from "@/schema/fiche-technique.schema";
-import { getEtablissementAccueil } from "@/services/api";
+import type { EncadreurType, EtablissementType } from "@/schema/fiche-technique.schema";
+import { getEncadreurPro, getEtablissementAccueil } from "@/services/api";
 
 export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
   const getSummaryData = () => {
     const data = getValues();
-    const [etablissementAccueil, setEtablissementAccueil] = useState<EtablissementType>();
+    const [etablissementAccueilSelected, setEtablissementAccueilSelected] = useState<EtablissementType>();
+    const [encadreurProSelected, setEncadreurProSelected] = useState<EncadreurType>();
     useEffect(() => {
-      const fetchEtablissementAccueils = async () => {
-        try {
-          console.log('DATD', data.etablissement.etablissementExistantId);
+      const fetchData = async () => {
+        try {          
+          const response_ea = await getEtablissementAccueil(10,0,data.etablissement.etablissementExistantId);
+          const etablissementAccueilsData = response_ea.data?.data[0] || [];
+          setEtablissementAccueilSelected(etablissementAccueilsData);
+
           
-          const response = await getEtablissementAccueil(10,0,data.etablissement.etablissementExistantId);
-          const etablissementAccueilsData = response.data?.data[0] || [];
-          console.log(etablissementAccueilsData);
-          
-          setEtablissementAccueil(etablissementAccueilsData);
+          const response_encpro = await getEncadreurPro(10,0,data.encadreur.encadreurExistantId);
+          const encadreurProData = response_encpro.data?.data[0] || [];
+          setEncadreurProSelected(encadreurProData);
         } catch (err) {
-          console.error('Failed to fetch établissement:', err);
+          console.error('Failed to fetch data selected from APIs:', err);
         }
       };
 
-      fetchEtablissementAccueils();
+      fetchData();
     }, []);
     return [
       {
@@ -44,7 +45,7 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
         fields: (() => {
           const etab = data.etablissement;
           if (etab.type === "existant" && etab.etablissementExistantId) {
-            const etablissementExistant = etablissementAccueil
+            const etablissementExistant = etablissementAccueilSelected
             return etablissementExistant
               ? [
                   { label: "Sigle", value: etablissementExistant.sigle_ea },
@@ -53,9 +54,13 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
                     value: etablissementExistant.raison_sociale,
                   },
                   { label: "Email", value: etablissementExistant.email_ea },
+                  { label: "Telephone", value: etablissementExistant.contact_ea },
                   {
                     label: "Adresse",
                     value: etablissementExistant.adresse_ea,
+                  },{
+                    label: "Site web",
+                    value: etablissementExistant.site_web_ea,
                     span: true,
                   },
                 ]
@@ -82,18 +87,16 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
         fields: (() => {
           const enc = data.encadreur;
           if (enc.type === "existant" && enc.encadreurExistantId) {
-            const encadreurExistant = ENCADREURS_EXISTANTS.find(
-              (e) => e.id === enc.encadreurExistantId
-            );
+            const encadreurExistant = encadreurProSelected
             return encadreurExistant
               ? [
-                  { label: "Nom", value: encadreurExistant.nom },
-                  { label: "Prénom(s)", value: encadreurExistant.prenoms },
-                  { label: "Email", value: encadreurExistant.email },
-                  { label: "Téléphone", value: encadreurExistant.telephone },
+                  { label: "Nom", value: encadreurExistant.user?.nom },
+                  { label: "Prénom(s)", value: encadreurExistant.user?.prenoms },
+                  { label: "Email", value: encadreurExistant.user?.email },
+                  { label: "Téléphone", value: encadreurExistant.user?.contact },
                   {
                     label: "Établissement",
-                    value: encadreurExistant.etablissement,
+                    value: etablissementAccueilSelected?.raison_sociale+" "+etablissementAccueilSelected?.adresse_ea,
                     span: true,
                   },
                 ]

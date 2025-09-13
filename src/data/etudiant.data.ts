@@ -116,5 +116,5 @@ export const formatEtudiantName = (etudiant: Etudiant): string => {
 
 // Fonction utilitaire pour formater avec matricule
 export const formatEtudiantWithMatricule = (inscription: InscriptionsAPI): string => {
-  return `${inscription.etudiant.matricule} - ${inscription.etudiant.user.nom} ${inscription.etudiant.user.prenoms}`;
+  return `${inscription.code_inscription} - ${inscription.etudiant.user.nom} ${inscription.etudiant.user.prenoms}`;
 };
