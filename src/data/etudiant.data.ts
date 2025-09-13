@@ -1,3 +1,5 @@
+import type { InscriptionsAPI } from "@/pages/fiche-technique/types/type";
+
 export interface Etudiant {
   matricule: string;
   nom: string;
@@ -113,6 +115,6 @@ export const formatEtudiantName = (etudiant: Etudiant): string => {
 };
 
 // Fonction utilitaire pour formater avec matricule
-export const formatEtudiantWithMatricule = (etudiant: Etudiant): string => {
-  return `${etudiant.matricule} - ${etudiant.nom} ${etudiant.prenom}`;
+export const formatEtudiantWithMatricule = (inscription: InscriptionsAPI): string => {
+  return `${inscription.etudiant.matricule} - ${inscription.etudiant.user.nom} ${inscription.etudiant.user.prenoms}`;
 };

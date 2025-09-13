@@ -10,7 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('authToken');
       if (token) {
         config.headers.authorization = `Bearer ${token}`;
       }
@@ -24,7 +24,7 @@ api.interceptors.response.use(
 async (error) => {
     const originalRequest = error.config;
     if (error.response && error.response.status === 403) {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
     return Promise.reject(error);
     }
@@ -34,12 +34,12 @@ async (error) => {
         const { data } = await axios.post(baseURL+'/v1/auth/refresh', {}, {
         headers: { authorization: `Bearer ${refreshToken}` },
         });
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('authToken', data.token);
         localStorage.setItem('refreshToken', data.refreshToken);
         originalRequest.headers.authorization = `Bearer ${data.token}`;
         return api(originalRequest);
     } catch (refreshError) {
-        localStorage.removeItem('token');
+        localStorage.removeItem('authToken');
         localStorage.removeItem('refreshToken');
     return Promise.reject(error);
     }
@@ -53,12 +53,15 @@ export const login = async (credentials:LoginFormData ) => {
     return api.post('/v1/auth/email/login', credentials);
 };
   
-export const getEtablissementAccueil = async (limit?: number, page?: number)=>{
+export const getEtablissementAccueil = async (limit?: number, page?: number, sigle_ea?: string)=>{
     let url = '/v1/etablissement-accueils';
   
     const params = [];
     if (limit) params.push(`limit=${limit}`);
     if (page) params.push(`page=${page}`);
+    if (sigle_ea) params.push(`sigle_ea=${sigle_ea}`);
+    console.log('sigle voar', sigle_ea);
+    
     if (params.length > 0) url += `?${params.join('&')}`;
   
     return api.get(url);
@@ -101,7 +104,7 @@ export const getInscriptions = async (
     parcours?: string,
     etudiant?: string
   ) => {
-  let url = '/v1/inscriptions';
+  let url = '/v1/inscriptions';  
   
   const params = [];
   if (limit) params.push(`limit=${limit}`);

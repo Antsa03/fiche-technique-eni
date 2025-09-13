@@ -1,4 +1,3 @@
-import type { User } from "@/services/auth.service";
 import z from "zod";
 
 const etablissementSchema = z
@@ -211,11 +210,3 @@ export type EncadreurType = z.infer<typeof encadreurSchema>;
 export type StagiaireType = z.infer<typeof stagiaireSchema>;
 export type SujetType = z.infer<typeof sujetSchema>;
 export type AspectTechniqueType = z.infer<typeof aspectTechniqueSchema>;
-export interface SpecialiteTheme {
-  code_specialite: string,
-  description_specialite: string,
-}
-export interface EncadreurProAPI {
-  id: string,
-  user: User,
-}

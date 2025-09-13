@@ -9,14 +9,33 @@ import {
   Eye,
   Shield,
 } from "lucide-react";
-import { ETABLISSEMENTS_EXISTANTS } from "@/data/etablissement.data";
 import { ENCADREURS_EXISTANTS } from "@/data/encadreur-pro.data";
 import type { StepContentProps } from "../../types/form.types";
+import { useEffect, useState } from "react";
+import type { EtablissementType } from "@/schema/fiche-technique.schema";
+import { getEtablissementAccueil } from "@/services/api";
 
 export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
   const getSummaryData = () => {
     const data = getValues();
+    const [etablissementAccueil, setEtablissementAccueil] = useState<EtablissementType>();
+    useEffect(() => {
+      const fetchEtablissementAccueils = async () => {
+        try {
+          console.log('DATD', data.etablissement.etablissementExistantId);
+          
+          const response = await getEtablissementAccueil(10,0,data.etablissement.etablissementExistantId);
+          const etablissementAccueilsData = response.data?.data[0] || [];
+          console.log(etablissementAccueilsData);
+          
+          setEtablissementAccueil(etablissementAccueilsData);
+        } catch (err) {
+          console.error('Failed to fetch établissement:', err);
+        }
+      };
 
+      fetchEtablissementAccueils();
+    }, []);
     return [
       {
         data: data.etablissement,
@@ -25,21 +44,18 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
         fields: (() => {
           const etab = data.etablissement;
           if (etab.type === "existant" && etab.etablissementExistantId) {
-            const etablissementExistant = ETABLISSEMENTS_EXISTANTS.find(
-              (e) => e.id === etab.etablissementExistantId
-            );
+            const etablissementExistant = etablissementAccueil
             return etablissementExistant
               ? [
-                  { label: "Type", value: "Établissement existant" },
-                  { label: "Sigle", value: etablissementExistant.sigle },
+                  { label: "Sigle", value: etablissementExistant.sigle_ea },
                   {
                     label: "Raison sociale",
-                    value: etablissementExistant.raisonSociale,
+                    value: etablissementExistant.raison_sociale,
                   },
-                  { label: "Email", value: etablissementExistant.email },
+                  { label: "Email", value: etablissementExistant.email_ea },
                   {
                     label: "Adresse",
-                    value: etablissementExistant.adressePostale,
+                    value: etablissementExistant.adresse_ea,
                     span: true,
                   },
                 ]
@@ -71,7 +87,6 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
             );
             return encadreurExistant
               ? [
-                  { label: "Type", value: "Encadreur existant" },
                   { label: "Nom", value: encadreurExistant.nom },
                   { label: "Prénom(s)", value: encadreurExistant.prenoms },
                   { label: "Email", value: encadreurExistant.email },
@@ -85,7 +100,6 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
               : [];
           } else {
             return [
-              { label: "Type", value: "Nouvel encadreur" },
               { label: "Nom", value: enc.nom || "" },
               { label: "Prénom(s)", value: enc.prenoms || "" },
               { label: "Email", value: enc.email || "" },

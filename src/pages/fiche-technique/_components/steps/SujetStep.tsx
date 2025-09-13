@@ -6,7 +6,7 @@ import { FormField } from "../form/FormField";
 import type { StepContentProps } from "../../types/form.types";
 import { useEffect, useState } from "react";
 import { getSpecialite } from "@/services/api";
-import type {SpecialiteTheme } from "@/schema/fiche-technique.schema";
+import type {SpecialiteTheme } from "@/pages/fiche-technique/types/type";
 
 export const SujetStep = ({ control }: StepContentProps) => {
   // Préparer les options pour le SearchableSelect

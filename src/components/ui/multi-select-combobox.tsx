@@ -13,22 +13,26 @@ interface MultiSelectComboboxProps {
   options: string[];
   value: string[];
   onChange: (value: string[]) => void;
+  onSearchChange?: (searchValue: string) => void; // Nouvelle prop pour la recherche API
   placeholder?: string;
   searchPlaceholder?: string;
   maxItems?: number;
   className?: string;
   error?: boolean;
+  loading?: boolean; // Nouvelle prop pour l'état de chargement
 }
 
 export function MultiSelectCombobox({
   options,
   value,
   onChange,
+  onSearchChange, // Nouvelle prop
   placeholder = "Sélectionner des éléments...",
   searchPlaceholder = "Rechercher ou saisir un nouveau nom...",
   maxItems = 5,
   className,
   error = false,
+  loading = false, // Nouvelle prop
 }: MultiSelectComboboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,8 +43,9 @@ export function MultiSelectCombobox({
   });
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout>(null);
 
-  // Filter options based on search term
+  // Filter options based on search term (pour le filtrage local si pas d'API)
   const filteredOptions = options.filter((option) =>
     option.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -54,6 +59,24 @@ export function MultiSelectCombobox({
         left: rect.left,
         width: rect.width,
       });
+    }
+  };
+
+  // Gérer la recherche avec debounce
+  const handleSearchChange = (newSearchTerm: string) => {
+    setSearchTerm(newSearchTerm);
+    
+    // Si onSearchChange est fourni, utiliser l'API
+    if (onSearchChange) {
+      // Annuler le timeout précédent
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      // Créer un nouveau timeout pour le debounce
+      searchTimeoutRef.current = setTimeout(() => {
+        onSearchChange(newSearchTerm);
+      }, 300);
     }
   };
 
@@ -110,6 +133,15 @@ export function MultiSelectCombobox({
     }
   }, [isOpen]);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleOpen = () => {
     setIsOpen(true);
     inputRef.current?.focus();
@@ -123,6 +155,10 @@ export function MultiSelectCombobox({
       onChange(value.filter((item) => item !== option));
     }
     setSearchTerm("");
+    // Réinitialiser la recherche API si nécessaire
+    if (onSearchChange) {
+      onSearchChange("");
+    }
     // Garder le focus mais ne pas fermer le dropdown
     setTimeout(() => {
       inputRef.current?.focus();
@@ -137,12 +173,18 @@ export function MultiSelectCombobox({
     if (e.key === "Escape") {
       setIsOpen(false);
       setSearchTerm("");
+      if (onSearchChange) {
+        onSearchChange("");
+      }
     }
   };
 
   // Dropdown component pour le portal
   const renderDropdown = () => {
     if (!isOpen) return null;
+
+    // Utiliser les options filtrées ou toutes les options selon la présence d'onSearchChange
+    const displayOptions = onSearchChange ? options : filteredOptions;
 
     return (
       <div
@@ -159,9 +201,17 @@ export function MultiSelectCombobox({
           e.stopPropagation();
         }}
       >
-        {/* Existing options */}
-        {filteredOptions.length > 0 ? (
-          filteredOptions.map((option) => {
+        {/* Indicateur de chargement */}
+        {loading && (
+          <div className="px-3 py-2 text-sm text-muted-foreground flex items-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
+            Recherche en cours...
+          </div>
+        )}
+
+        {/* Options existantes */}
+        {!loading && displayOptions.length > 0 ? (
+          displayOptions.map((option) => {
             const isSelected = value.includes(option);
             const isDisabled = !isSelected && value.length >= maxItems;
 
@@ -193,13 +243,13 @@ export function MultiSelectCombobox({
               </div>
             );
           })
-        ) : (
+        ) : !loading ? (
           <div className="px-3 py-2 text-sm text-muted-foreground">
-            Aucun résultat trouvé
+            {searchTerm ? `Aucun résultat trouvé pour "${searchTerm}"` : "Aucun résultat trouvé"}
           </div>
-        )}
+        ) : null}
 
-        {value.length >= maxItems && (
+        {!loading && value.length >= maxItems && (
           <div className="px-3 py-2 text-xs text-muted-foreground bg-muted/30 border-t border-border">
             Maximum {maxItems} éléments sélectionnés
           </div>
@@ -244,12 +294,15 @@ export function MultiSelectCombobox({
         </div>
 
         <div className="flex items-center gap-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
+          <Search className={cn(
+            "h-4 w-4",
+            loading ? "text-primary animate-pulse" : "text-muted-foreground"
+          )} />
           <input
             ref={inputRef}
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={value.length === 0 ? placeholder : searchPlaceholder}
             className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
