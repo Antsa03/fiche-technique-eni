@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { FormField } from "../form/FormField";
 import type { StepContentProps } from "../../types/form.types";
-import type { EncadreurProAPI, EncadreurType } from "@/schema/fiche-technique.schema";
+import type { EncadreurType } from "@/schema/fiche-technique.schema";
 import { useEffect, useState } from "react";
 import { getEncadreurPro } from "@/services/api";
 
@@ -114,30 +114,33 @@ export const EncadreurStep = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormField
               control={control}
-              name="encadreur.nom"
+              name="encadreur.user.nom"
               label="Nom"
               placeholder="Nom"
             />
             <FormField
               control={control}
-              name="encadreur.prenoms"
+              name="encadreur.user.prenoms"
               label="Prénom(s)"
               placeholder="Prénom(s)"
             />
           </div>
-          <FormField
-            control={control}
-            name="encadreur.email"
-            label="Email professionnel"
-            type="email"
-            placeholder="prenom.nom@entreprise.com"
-          />
-          <FormField
-            control={control}
-            name="encadreur.telephone"
-            label="Numéro de téléphone"
-            placeholder="+261 XX XX XXX XX"
-          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <FormField
+              control={control}
+              name="encadreur.user.email"
+              label="Email professionnel"
+              type="email"
+              placeholder="prenom.nom@entreprise.com"
+            />
+            <FormField
+              control={control}
+              name="encadreur.user.contact"
+              label="Numéro de téléphone"
+              placeholder="+261 XX XX XXX XX"
+            />
+          </div>
         </>
       )}
 

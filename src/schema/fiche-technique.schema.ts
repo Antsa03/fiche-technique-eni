@@ -26,7 +26,8 @@ const etablissementSchema = z
       .optional(),
       site_web_ea: z
       .string()
-      .optional(),
+      .optional()
+      .nullable(),
   })
   .refine(
     (data) => {

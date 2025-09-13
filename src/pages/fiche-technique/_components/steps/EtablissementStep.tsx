@@ -117,32 +117,48 @@ export const EtablissementStep = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormField
               control={control}
-              name="etablissement.sigle"
+              name="etablissement.sigle_ea"
               label="Sigle de l'entreprise"
               placeholder="Ex: ACME Inc."
             />
             <FormField
               control={control}
-              name="etablissement.raisonSociale"
+              name="etablissement.raison_sociale"
               label="Raison sociale"
               placeholder="Nom complet de l'entreprise"
             />
           </div>
-          <FormField
-            control={control}
-            name="etablissement.email"
-            label="Email de contact"
-            type="email"
-            placeholder="contact@entreprise.com"
-          />
-          <FormField
-            control={control}
-            name="etablissement.adressePostale"
-            label="Adresse postale complète"
-            placeholder="Adresse, code postal, ville, pays"
-            as={Textarea}
-            rows={2}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <FormField
+              control={control}
+              name="etablissement.email_ea"
+              label="Email de l'etablissement d'accueil"
+              type="email"
+              placeholder="contact@entreprise.com"
+            />
+            <FormField
+              control={control}
+              name="etablissement.contact_ea"
+              label="Telephone de l'etablissement d'accueil"
+              placeholder="+261 xx xx xxx xx"
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <FormField
+              control={control}
+              name="etablissement.site_web_ea"
+              label="Site web de l'etablissement d'accueil"
+              placeholder="entreprise.com"
+            />
+            <FormField
+              control={control}
+              name="etablissement.adresse_ea"
+              label="Adresse postale complète"
+              placeholder="Adresse, code postal, ville, pays"
+              as={Textarea}
+              rows={2}
+            />
+          </div>
         </>
       )}
 
@@ -173,6 +189,14 @@ export const EtablissementStep = ({
                 <p>
                   <span className="font-medium">Adresse:</span>{" "}
                   {etablissement.adresse_ea}
+                </p>
+                <p>
+                  <span className="font-medium">Telephone:</span>{" "}
+                  {etablissement.contact_ea}
+                </p>
+                <p>
+                  <span className="font-medium">Site web:</span>{" "}
+                  {etablissement.site_web_ea}
                 </p>
               </div>
             ) : null;

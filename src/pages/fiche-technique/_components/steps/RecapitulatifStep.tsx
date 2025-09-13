@@ -67,13 +67,17 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
               : [];
           } else {
             return [
-              { label: "Type", value: "Nouvel établissement" },
-              { label: "Sigle", value: etab.sigle || "" },
-              { label: "Raison sociale", value: etab.raisonSociale || "" },
-              { label: "Email", value: etab.email || "" },
+              { label: "Sigle", value: etab.sigle_ea || "" },
+              { label: "Raison sociale", value: etab.raison_sociale || "" },
+              { label: "Email", value: etab.email_ea || "" },
+              { label: "Telephone", value: etab.contact_ea || "" },
               {
                 label: "Adresse",
                 value: etab.adressePostale || "",
+              },
+              {
+                label: "Site web",
+                value: etab.site_web_ea || "",
                 span: true,
               },
             ];
@@ -94,19 +98,14 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
                   { label: "Prénom(s)", value: encadreurExistant.user?.prenoms },
                   { label: "Email", value: encadreurExistant.user?.email },
                   { label: "Téléphone", value: encadreurExistant.user?.contact },
-                  {
-                    label: "Établissement",
-                    value: etablissementAccueilSelected?.raison_sociale+" "+etablissementAccueilSelected?.adresse_ea,
-                    span: true,
-                  },
                 ]
               : [];
           } else {
             return [
-              { label: "Nom", value: enc.nom || "" },
-              { label: "Prénom(s)", value: enc.prenoms || "" },
-              { label: "Email", value: enc.email || "" },
-              { label: "Téléphone", value: enc.telephone || "" },
+              { label: "Nom", value: enc.user.nom || "" },
+              { label: "Prénom(s)", value: enc.user.prenoms || "" },
+              { label: "Email", value: enc.user.email || "" },
+              { label: "Téléphone", value: enc.user.contact || "" },
             ];
           }
         })(),
@@ -119,7 +118,7 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
           { label: "Niveau d'étude", value: data.stagiaire.niveau },
           { label: "Parcours", value: data.stagiaire.parcours },
           {
-            label: "Liste des stagiaires",
+            label: "Liste de(s) stagiaire(s)",
             value: data.stagiaire.stagiaires,
             isBadges: true,
             span: true,
