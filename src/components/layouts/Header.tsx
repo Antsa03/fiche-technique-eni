@@ -1,18 +1,45 @@
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Settings, ChevronDown, Lock } from "lucide-react";
 import { AuthService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
+import { ChangePasswordModal } from "@/components/change-password/change-password-modal";
 import toast from "react-hot-toast";
 
 export default function Header() {
   const navigate = useNavigate();
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const isAuthenticated = AuthService.isAuthenticated();
   const user = AuthService.getUser();
+
+  // Fermer le menu au clic à l'extérieur
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showUserMenu]);
 
   const handleLogout = () => {
     AuthService.logout();
     toast.success("Déconnexion réussie");
     navigate("/", { replace: true });
+  };
+
+  const handleOpenChangePassword = () => {
+    setShowUserMenu(false);
+    setShowChangePasswordModal(true);
   };
 
   return (
@@ -29,15 +56,13 @@ export default function Header() {
               <h1 className="text-xl font-semibold text-gray-900">
                 École Nationale d'Informatique
               </h1>
-              <p className="text-sm text-gray-600">
-                Système de Fiche Technique
-              </p>
+              <p className="text-sm text-gray-600">Fianarantsoa, Madagascar</p>
             </div>
           </div>
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
-            {isAuthenticated && user ? (
+            {isAuthenticated && user && (
               <>
                 <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
                   <User className="h-4 w-4" />
@@ -48,26 +73,53 @@ export default function Header() {
                     {user.role.name}
                   </span>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Déconnexion</span>
-                </Button>
+
+                {/* User Menu */}
+                <div className="relative" ref={menuRef}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-1"
+                  >
+                    <Settings className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+
+                  {/* Dropdown Menu */}
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                      <div className="py-1">
+                        <button
+                          onClick={handleOpenChangePassword}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <Lock className="mr-2 h-4 w-4" />
+                          Mot de passe
+                        </button>
+                        <div className="border-t border-gray-100" />
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Déconnexion
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </>
-            ) : (
-              <div className="hidden md:flex items-center space-x-4">
-                <span className="text-sm text-gray-500">
-                  Fianarantsoa, Madagascar
-                </span>
-              </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        open={showChangePasswordModal}
+        onOpenChange={setShowChangePasswordModal}
+      />
     </header>
   );
 }

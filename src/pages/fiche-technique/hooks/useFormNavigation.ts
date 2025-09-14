@@ -16,14 +16,19 @@ export const useFormNavigation = ({ trigger }: UseFormNavigationProps) => {
       return true;
     }
 
-    const stepKey = STEPS[currentStep].id as keyof FormData;
-    const isValid = await trigger(stepKey);
+    try {
+      const stepKey = STEPS[currentStep].id as keyof FormData;
+      const isValid = await trigger(stepKey);
 
-    if (isValid) {
-      setCompletedSteps((prev) => new Set([...prev, currentStep]));
+      if (isValid) {
+        setCompletedSteps((prev) => new Set([...prev, currentStep]));
+      }
+
+      return isValid;
+    } catch (error) {
+      console.error("Validation error:", error);
+      return false;
     }
-
-    return isValid;
   }, [currentStep, trigger]);
 
   const nextStep = useCallback(async () => {

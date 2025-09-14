@@ -15,6 +15,7 @@ import { useFormNavigation } from "./hooks/useFormNavigation";
 import { useFormHandlers } from "./hooks/useFormHandlers";
 import { StagiaireStep } from "./_components/steps/StagiaireStep";
 
+
 export default function FicheTechniquePage() {
   // Form setup
   const form = useFormValidation();

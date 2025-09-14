@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { MobileHeader } from "./MobileHeader";
 import { STEPS } from "@/data/steps.data";
+import { ANNEE_UNIVERSITAIRE_ACTUELLE } from "@/lib/constants";
 
 interface PageLayoutProps {
   currentStep: number;
@@ -41,6 +42,9 @@ export const PageLayout = ({
             </Card>
           </div>
         </div>
+      </div>
+      <div className="mt-6 text-center text-base text-gray-500">
+        <p>Année universitaire: {ANNEE_UNIVERSITAIRE_ACTUELLE}</p>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import {
   resetEtablissementFields,
   resetEncadreurFields,
 } from "../utils/formUtils";
+import toast from "react-hot-toast";
 
 interface UseFormHandlersProps {
   setValue: any; // UseFormSetValue type from react-hook-form
@@ -48,7 +49,7 @@ export const useFormHandlers = ({ setValue }: UseFormHandlersProps) => {
   // La logique de soumission du formulaire
   const onSubmit = useCallback((data: any) => {
     console.log("=== DONNÉES DU FORMULAIRE ===", data);
-    alert("Demande de stage soumise avec succès !");
+    toast.success("Demande de stage soumise avec succès !");
   }, []);
 
   return {

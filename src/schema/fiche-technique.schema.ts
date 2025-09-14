@@ -1,102 +1,76 @@
 import z from "zod";
 
-const etablissementSchema = z
-  .object({
-    type: z.enum(["nouveau", "existant"]),
+const etablissementSchema = z.discriminatedUnion("type", [
+  // Schéma pour établissement existant
+  z.object({
+    type: z.literal("existant"),
+    etablissementExistantId: z
+      .string()
+      .min(1, "Veuillez sélectionner un établissement existant"),
+    // Champs optionnels car remplis automatiquement
+    sigle_ea: z.string().optional(),
+    raison_sociale: z.string().optional(),
+    email_ea: z.string().optional(),
+    adresse_ea: z.string().optional(),
+    contact_ea: z.string().optional(),
+    site_web_ea: z.string().optional().nullable(),
+  }),
+  // Schéma pour nouvel établissement
+  z.object({
+    type: z.literal("nouveau"),
     etablissementExistantId: z.string().optional(),
-    sigle_ea: z
+    // Champs obligatoires pour un nouvel établissement
+    sigle_ea: z.string().min(2, "Le sigle doit contenir au moins 2 caractères"),
+    raison_sociale: z
       .string()
-      .min(2, "Le sigle doit contenir au moins 2 caractères")
-      .optional(),
-      raison_sociale: z
+      .min(3, "La raison sociale doit contenir au moins 3 caractères"),
+    email_ea: z.string().email("Veuillez saisir une adresse email valide"),
+    adresse_ea: z
       .string()
-      .min(3, "La raison sociale doit contenir au moins 3 caractères")
-      .optional(),
-      email_ea: z
+      .min(10, "L'adresse doit être complète (minimum 10 caractères)"),
+    contact_ea: z
       .string()
-      .email("Veuillez saisir une adresse email valide")
-      .optional(),
-      adresse_ea: z
-      .string()
-      .min(10, "L'adresse doit être complète (minimum 10 caractères)")
-      .optional(),
-      contact_ea: z
-      .string()
-      .min(10, "Le contact doit être complète (minimum 10 caractères)")
-      .optional(),
-      site_web_ea: z
-      .string()
-      .optional()
-      .nullable(),
-  })
-  .refine(
-    (data) => {
-      if (data.type === "existant") {
-        return !!data.etablissementExistantId;
-      } else {
-        return !!(
-          data.sigle_ea &&
-          data.raison_sociale &&
-          data.email_ea &&
-          data.adresse_ea &&
-          data.contact_ea &&
-          data.site_web_ea
-        );
-      }
-    },
-    {
-      message: "Veuillez compléter tous les champs requis",
-      path: ["sigle"],
-    }
-  );
+      .min(10, "Le contact doit être complète (minimum 10 caractères)"),
+    site_web_ea: z.string().optional().nullable(),
+  }),
+]);
 
-const encadreurSchema = z
-  .object({
-    type: z.enum(["nouveau", "existant"]),
-    encadreurExistantId: z.string().optional(),
-    id: z
+const encadreurSchema = z.discriminatedUnion("type", [
+  // Schéma pour encadreur existant
+  z.object({
+    type: z.literal("existant"),
+    encadreurExistantId: z
       .string()
-      .min(2, "Erreur sur l id enc pro")
-      .optional(),
+      .min(1, "Veuillez sélectionner un encadreur existant"),
+    // Champs optionnels car remplis automatiquement
+    id: z.string().optional(),
     user: z
       .object({
-        nom: z
-          .string()
-          .min(2, "Le nom doit contenir au moins 2 caractères")
-          .optional(),
-        prenoms: z
-          .string()
-          .min(2, "Les prénoms doivent contenir au moins 2 caractères")
-          .optional(),
-        email: z
-          .string()
-          .email("Veuillez saisir une adresse email valide")
-          .optional(),
-        contact: z
-          .string()
-          .min(8, "Le numéro de téléphone doit contenir au moins 8 chiffres")
-          .optional(),
+        nom: z.string().optional(),
+        prenoms: z.string().optional(),
+        email: z.string().optional(),
+        contact: z.string().optional(),
       })
       .optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.type === "existant") {
-        return !!data.encadreurExistantId;
-      } else {
-        return !!(
-          data.user?.nom &&
-          data.user?.prenoms &&
-          data.user?.email &&
-          data.user?.contact
-        );
-      }
-    },
-    {
-      message: "Veuillez compléter tous les champs requis",
-      path: ["user"],
-    }
-  );
+  }),
+  // Schéma pour nouvel encadreur
+  z.object({
+    type: z.literal("nouveau"),
+    encadreurExistantId: z.string().optional(),
+    id: z.string().optional(),
+    // Champs obligatoires pour un nouvel encadreur
+    user: z.object({
+      nom: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+      prenoms: z
+        .string()
+        .min(2, "Les prénoms doivent contenir au moins 2 caractères"),
+      email: z.string().email("Veuillez saisir une adresse email valide"),
+      contact: z
+        .string()
+        .min(8, "Le numéro de téléphone doit contenir au moins 8 chiffres"),
+    }),
+  }),
+]);
 
 const stagiaireSchema = z
   .object({

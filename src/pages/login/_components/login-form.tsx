@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      const response = await login(data)
+      const response = await login(data);
       const authData = await response.data;
 
       // Stocker les données d'authentification dans localStorage en utilisant AuthService
@@ -142,6 +142,16 @@ export function LoginForm({
             "Se connecter"
           )}
         </Button>
+
+        {/* Forgot Password Link */}
+        <div className="text-center">
+          <Link
+            to="/forgot-password"
+            className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
+          >
+            Mot de passe oublié ?
+          </Link>
+        </div>
       </div>
     </form>
   );
