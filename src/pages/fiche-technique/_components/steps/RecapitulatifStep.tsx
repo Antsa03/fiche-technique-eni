@@ -53,6 +53,7 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
                     label: "Raison sociale",
                     value: etablissementExistant.raison_sociale,
                   },
+                  { label: "Responsable", value: etablissementExistant.responsable_ea },
                   { label: "Email", value: etablissementExistant.email_ea },
                   { label: "Telephone", value: etablissementExistant.contact_ea },
                   {

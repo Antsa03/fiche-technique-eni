@@ -128,6 +128,12 @@ export const EtablissementStep = ({
               placeholder="Nom complet de l'entreprise"
             />
           </div>
+            <FormField
+              control={control}
+              name="etablissement.responsable_ea"
+              label="Responsable de l'etablissement d'accueil"
+              placeholder="Nom du directeur ou du responsable"
+            />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormField
               control={control}
@@ -181,6 +187,10 @@ export const EtablissementStep = ({
                 <p>
                   <span className="font-medium">Raison sociale:</span>{" "}
                   {etablissement.raison_sociale}
+                </p>
+                <p>
+                  <span className="font-medium">Responsable:</span>{" "}
+                  {etablissement.responsable_ea}
                 </p>
                 <p>
                   <span className="font-medium">Email:</span>{" "}

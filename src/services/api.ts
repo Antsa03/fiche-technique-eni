@@ -51,6 +51,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem("authToken");
         localStorage.removeItem("refreshToken");
+        window.location.href = '/';
         return Promise.reject(error);
       }
     }
@@ -166,4 +167,8 @@ export const getInscriptions = async (
   if (params.length > 0) url += `?${params.join("&")}`;
 
   return api.get(url);
+};
+
+export const addFicheTechnique = async (data: any) => {
+  return api.post('v1/formation/pratiques', data);
 };

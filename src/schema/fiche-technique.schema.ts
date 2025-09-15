@@ -10,6 +10,7 @@ const etablissementSchema = z.discriminatedUnion("type", [
     // Champs optionnels car remplis automatiquement
     sigle_ea: z.string().optional(),
     raison_sociale: z.string().optional(),
+    responsable_ea: z.string().optional(),
     email_ea: z.string().optional(),
     adresse_ea: z.string().optional(),
     contact_ea: z.string().optional(),
@@ -24,6 +25,7 @@ const etablissementSchema = z.discriminatedUnion("type", [
     raison_sociale: z
       .string()
       .min(3, "La raison sociale doit contenir au moins 3 caractères"),
+    responsable_ea: z.string().min(4, "Veuillez saisir le nom complet"),
     email_ea: z.string().email("Veuillez saisir une adresse email valide"),
     adresse_ea: z
       .string()
