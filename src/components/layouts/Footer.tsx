@@ -132,7 +132,7 @@ export default function Footer() {
               Fianarantsoa.
             </p>
             <p className="text-xs text-gray-500">
-              Tous droits réservés. Système de fiche technique v2.0
+              Tous droits réservés. ENI Practice V2.2
             </p>
           </div>
         </div>
