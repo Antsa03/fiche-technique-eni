@@ -85,7 +85,7 @@ export const EncadreurStep = ({
                 <SearchableSelect
                   options={encadreurPros.map((encadreur) => ({
                     value: encadreur.id,
-                    label: `${encadreur.user?.nom} ${encadreur.user?.nom}`,
+                    label: `${encadreur.user?.nom} ${encadreur.user?.prenoms}`,
                     description: `${encadreur.user?.contact} - ${encadreur.user?.email}`,
                   }))}
                   value={field.value}
