@@ -1,10 +1,4 @@
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Facebook,
-  Linkedin,
-} from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -26,8 +20,8 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm text-gray-700 leading-relaxed">
-              École Nationale d'Informatique - Formation d'excellence en
-              informatique
+              Ecole Nationale d'Informatique - La pépinière des élites
+              informaticiennes
             </p>
           </div>
 
@@ -37,14 +31,9 @@ export default function Footer() {
               À propos
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
-              Site web pour envoyer la fiche technique à l'ENI. Plateforme
-              dédiée aux étudiants et encadreurs.
+              La plateforme de suivi pédagogique de l'ENI est dédiée aux
+              étudiants et encadreurs
             </p>
-            <div className="mt-4">
-              <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-xs">
-                Système de Gestion
-              </span>
-            </div>
           </div>
 
           {/* Contact */}
@@ -117,7 +106,6 @@ export default function Footer() {
             </div>
 
             {/* Zone pour la carte améliorée */}
-           
           </div>
         </div>
 
@@ -128,7 +116,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-center md:text-left">
             <p className="text-sm text-gray-600">
-              © {new Date().getFullYear()} École Nationale d'Informatique (ENI)
+              © {new Date().getFullYear()} Ecole Nationale d'Informatique (ENI)
               Fianarantsoa.
             </p>
             <p className="text-xs text-gray-500">
