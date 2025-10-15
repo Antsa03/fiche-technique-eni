@@ -10,9 +10,8 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    // Rediriger vers /fiche-technique si l'utilisateur est déjà connecté
     if (AuthService.isAuthenticated()) {
-      navigate("/fiche-technique", { replace: true });
+      navigate("/formulaire", { replace: true });
     }
   }, [navigate]);
 

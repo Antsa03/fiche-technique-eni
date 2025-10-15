@@ -67,7 +67,6 @@ export const login = async (credentials: LoginFormData) => {
 export const sendPasswordResetCode = async (data: ForgotPasswordFormData) => {
   // TODO: Implémenter l'envoi du code secret par email
   // Pour l'instant, fonction vide comme demandé
-  console.log("Envoi du code secret pour:", data.email);
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({ success: true });
@@ -103,7 +102,6 @@ export const getEtablissementAccueil = async (
   if (limit) params.push(`limit=${limit}`);
   if (page) params.push(`page=${page}`);
   if (sigle_ea) params.push(`sigle_ea=${sigle_ea}`);
-  console.log("sigle voar", sigle_ea);
 
   if (params.length > 0) url += `?${params.join("&")}`;
 

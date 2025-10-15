@@ -7,9 +7,8 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Rediriger vers /fiche-technique si l'utilisateur est déjà connecté
     if (AuthService.isAuthenticated()) {
-      navigate("/fiche-technique", { replace: true });
+      navigate("/formulaire", { replace: true });
     }
   }, [navigate]);
   return (

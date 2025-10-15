@@ -46,7 +46,7 @@ export function LoginForm({
 
       // Redirect to fiche technique page
       setTimeout(() => {
-        navigate("/fiche-technique");
+        navigate("/formulaire");
       }, 1000);
     } catch (error) {
       console.error("Erreur de connexion:", error);

@@ -294,7 +294,6 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
         }}
         // Nouvelle prop pour gérer la recherche API
         onSearchChange={(searchValue) => {
-          console.log('Recherche API:', searchValue);
           setSearchEtudiant(searchValue);
         }}
         placeholder="Sélectionner les étudiants stagiaires..."
