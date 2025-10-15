@@ -43,7 +43,7 @@ export function ForgotPasswordForm({
     setIsLoading(true);
 
     try {
-      await sendPasswordResetCode(data);
+      await sendPasswordResetCode();
       setIsSuccess(true);
       toast.success("Code secret envoyé par email !");
 
