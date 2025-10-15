@@ -69,9 +69,6 @@ export function LoginForm({
       {/* Header */}
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Connexion</h1>
-        <p className="text-sm text-muted-foreground">
-          Entrez vos identifiants pour continuer
-        </p>
       </div>
 
       <div className="space-y-4">

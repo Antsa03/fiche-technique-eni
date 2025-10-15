@@ -54,7 +54,7 @@ export default function Header() {
             </div>
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                École Nationale d'Informatique
+                Ecole Nationale d'Informatique
               </h1>
               <p className="text-sm text-gray-600">Fianarantsoa, Madagascar</p>
             </div>
