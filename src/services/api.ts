@@ -64,7 +64,7 @@ export const login = async (credentials: LoginFormData) => {
 };
 
 // Password Management APIs
-export const sendPasswordResetCode = async (data: ForgotPasswordFormData) => {
+export const sendPasswordResetCode = async () => {
   // TODO: Implémenter l'envoi du code secret par email
   // Pour l'instant, fonction vide comme demandé
   return new Promise((resolve) => {
