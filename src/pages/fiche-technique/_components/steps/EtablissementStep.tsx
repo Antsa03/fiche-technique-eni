@@ -155,6 +155,7 @@ export const EtablissementStep = ({
               name="etablissement.site_web_ea"
               label="Site web de l'etablissement d'accueil"
               placeholder="entreprise.com"
+              required={false}
             />
             <FormField
               control={control}
