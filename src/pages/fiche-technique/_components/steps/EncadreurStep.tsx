@@ -75,7 +75,7 @@ export const EncadreurStep = ({
       {encadreurType === "existant" && (
         <div className="space-y-1">
           <Label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
-            Sélectionner un encadreur <span className="text-red-500">*</span>
+            Sélectionner un encadreur professionnel <span className="text-red-500">*</span>
           </Label>
           <Controller
             name="encadreur.encadreurExistantId"
@@ -93,8 +93,8 @@ export const EncadreurStep = ({
                     field.onChange(value);
                     onEncadreurExistantChange(value);
                   }}
-                  placeholder="Choisir un encadreur..."
-                  searchPlaceholder="Rechercher un encadreur..."
+                  placeholder="Choisir un encadreur professionnel ..."
+                  searchPlaceholder="Rechercher un encadreur encadreur professionnel ..."
                   error={!!fieldState.error}
                 />
                 {fieldState.error && (
