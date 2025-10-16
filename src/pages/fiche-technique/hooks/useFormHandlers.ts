@@ -90,7 +90,7 @@ export const useFormHandlers = ({ setValue }: UseFormHandlersProps) => {
         etablissement_accueils: []
       },
       nouveau_ea: {
-        sigle_ea: data.etablissement.sigle_ea || data.etablissementExistantId,
+        sigle_ea: data.etablissement.sigle_ea || data.etablissement.etablissementExistantId,
         site_web_ea: data.etablissement.site_web_ea || "www.com",
         contact_ea: data.etablissement.contact_ea || "test",
         email_ea: data.etablissement.email_ea || "test@gmail.com",
@@ -103,9 +103,11 @@ export const useFormHandlers = ({ setValue }: UseFormHandlersProps) => {
 
     }
     try{
+      console.log(formatedData);
+      
       await addFicheTechnique(formatedData)
       toast.success("Fiche technique soumise avec succès !");
-      window.location.href = '/';
+      // window.location.href = '/';
     }
     catch (error){
       console.log(error);  
