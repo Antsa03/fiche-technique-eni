@@ -74,7 +74,7 @@ export const RecapitulatifStep = ({ getValues }: StepContentProps) => {
               { label: "Telephone", value: etab.contact_ea || "" },
               {
                 label: "Adresse",
-                value: etab.adressePostale || "",
+                value: etab.adresse_ea || "",
               },
               {
                 label: "Site web",
