@@ -56,8 +56,8 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
       
       try {
         const response = await getInscriptions(
-          10, // limit
-          0,  // offset (corrigé: devrait commencer à 0, pas 5)
+          5,
+          0,
           selectedNiveau,
           ANNEE_UNIVERSITAIRE_ACTUELLE,
           selectedParcours,
@@ -300,7 +300,7 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
         searchPlaceholder="Rechercher un étudiant par nom, prénom ou matricule..."
         maxItems={maxStagiaires}
         error={!!fieldState.error}
-        loading={isLoading} // Afficher l'état de chargement
+        loading={isLoading}
       />
       
       {/* Messages informatifs */}

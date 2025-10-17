@@ -103,11 +103,10 @@ export const useFormHandlers = ({ setValue }: UseFormHandlersProps) => {
 
     }
     try{
-      console.log(formatedData);
       
       await addFicheTechnique(formatedData)
       toast.success("Fiche technique soumise avec succès !");
-      // window.location.href = '/';
+      window.location.href = '/';
     }
     catch (error){
       console.log(error);  
