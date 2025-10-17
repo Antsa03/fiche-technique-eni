@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User, Settings, ChevronDown, Lock } from "lucide-react";
+import { LogOut, User, Settings, ChevronDown, } from "lucide-react";
 import { AuthService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
 import { ChangePasswordModal } from "@/components/change-password/change-password-modal";
@@ -37,10 +37,10 @@ export default function Header() {
     navigate("/", { replace: true });
   };
 
-  const handleOpenChangePassword = () => {
-    setShowUserMenu(false);
-    setShowChangePasswordModal(true);
-  };
+  // const handleOpenChangePassword = () => {
+  //   setShowUserMenu(false);
+  //   setShowChangePasswordModal(true);
+  // };
 
   return (
     <header className="bg-white shadow-sm border-b">
