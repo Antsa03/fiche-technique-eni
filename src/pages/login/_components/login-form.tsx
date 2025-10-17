@@ -141,14 +141,14 @@ export function LoginForm({
         </Button>
 
         {/* Forgot Password Link */}
-        <div className="text-center">
+        {/* <div className="text-center">
           <Link
             to="/forgot-password"
             className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
           >
             Mot de passe oublié ?
           </Link>
-        </div>
+        </div> */}
       </div>
     </form>
   );

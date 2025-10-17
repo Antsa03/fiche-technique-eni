@@ -90,13 +90,13 @@ export default function Header() {
                   {showUserMenu && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
                       <div className="py-1">
-                        <button
+                        {/* <button
                           onClick={handleOpenChangePassword}
                           className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                         >
                           <Lock className="mr-2 h-4 w-4" />
                           Mot de passe
-                        </button>
+                        </button> */}
                         <div className="border-t border-gray-100" />
                         <button
                           onClick={handleLogout}
