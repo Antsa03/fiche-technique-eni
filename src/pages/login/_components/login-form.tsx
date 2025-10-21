@@ -43,11 +43,7 @@ export function LoginForm({
       AuthService.setAuthData(authData);
 
       toast.success("Connexion réussie ! Redirection en cours...");
-
-      // Redirect to fiche technique page
-      setTimeout(() => {
-        navigate("/formulaire");
-      }, 1000);
+      navigate("/formulaire");
     } catch (error) {
       console.error("Erreur de connexion:", error);
       toast.error(

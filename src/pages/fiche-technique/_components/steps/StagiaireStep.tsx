@@ -8,10 +8,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MultiSelectCombobox } from "@/components/ui/multi-select-combobox";
-import { formatEtudiantWithMatricule } from "@/data/etudiant.data";
 import type { StepContentProps } from "../../types/form.types";
 import { useEffect, useState } from "react";
-import type { InscriptionsAPI } from "@/pages/fiche-technique/types/type";
 import { getInscriptions } from "@/services/api";
 import { ANNEE_UNIVERSITAIRE_ACTUELLE } from "@/lib/constants";
 
@@ -55,7 +53,7 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
       setError(null);
       
       try {
-        const response = await getInscriptions(
+        const { data } = await getInscriptions(
           5,
           0,
           selectedNiveau,
@@ -64,14 +62,17 @@ export const StagiaireStep = ({ control, trigger }: StepContentProps) => {
           searchEtudiant,
           'SFT'
         );
-        
-        const inscriptionsData = response.data?.data || [];        
-        setEtudiantOptions(inscriptionsData.map((etudiant: InscriptionsAPI) => formatEtudiantWithMatricule(etudiant))) ;
-        
-      } catch (err) {
-        console.error('Failed to fetch Inscriptions:', err);
-        setError('Erreur lors du chargement des inscriptions');
-      } finally {
+      
+        setEtudiantOptions(
+          data?.data?.map((i: { code_inscription: any; etudiant: { user: { nom: any; prenoms: any; }; }; }) =>
+            `${i.code_inscription ?? ''} - ${i.etudiant?.user?.nom ?? ''} ${i.etudiant?.user?.prenoms ?? ''}`.trim()
+          ) ?? []
+        );
+      } catch (error) {
+        console.error('Erreur lors du chargement des inscriptions:', error);
+        setEtudiantOptions([]);
+      }
+       finally {
         setIsLoading(false);
       }
     };
