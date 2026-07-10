@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx vite *)",
+      "Bash(ls -la scratchpad/)",
+      "Bash(ls \"C:/Users/ELYS~1/AppData/Local/Temp/claude/d--JOB-ENI-PRACTICE-fiche-sender-fiche-technique/3344e740-9c0a-48af-a333-dce12f913b8a/scratchpad/\")",
+      "Bash(find \"C:/Users/ELYS~1/AppData/Local/Temp/claude\" -name \"*.md\" 2>/dev/null | grep -i pv; echo \"=== project search ===\"; find \"d:/JOB/ENI_PRACTICE\" -name \"prompt-affichage-pv.md\" 2>/dev/null; echo \"=== any scratchpad dirs ===\"; find \"d:/JOB/ENI_PRACTICE/fiche-sender/fiche-technique\" -maxdepth 2 -type d -name \"scratchpad\" 2>/dev/null)",
+      "Read(//c/Users/ELYS~1/AppData/Local/Temp/claude/**)",
+      "Read(//d/JOB/ENI_PRACTICE/**)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026-eni-practice-frontend/**)",
+      "Read(//d/JOB/ENI_PRACTICE/fiche-sender/**)",
+      "Bash(ls \"d:/JOB/ENI_PRACTICE/front-2026\" 2>&1 | head -30)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026/**)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026/eni-practice-frontend/**)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026/eni-practice-frontend/src/**)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026/eni-practice-frontend/src/eni-practice/view/rsm/RsmPVSoutenance/**)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026/eni-practice-frontend/src/eni-practice/utils/**)",
+      "Read(//d/JOB/ENI_PRACTICE/front-2026/eni-practice-frontend/src/assets/icon/**)",
+      "Bash(npm install *)",
+      "Bash(echo \"EXIT: $?\")"
+    ]
+  }
+}

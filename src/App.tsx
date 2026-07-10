@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
 import FicheTechniquePage from "./pages/fiche-technique";
+import SoutenancePage from "./pages/soutenance";
 import LoginPage from "./pages/login";
 import ForgotPasswordPage from "./pages/forgot-password";
 import { ProtectedRoute } from "./components/protected-route";
@@ -23,6 +24,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <FicheTechniquePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/soutenance"
+              element={
+                <ProtectedRoute>
+                  <SoutenancePage />
                 </ProtectedRoute>
               }
             />

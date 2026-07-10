@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { LogOut, User, Settings, ChevronDown, } from "lucide-react";
 import { AuthService } from "@/services/auth.service";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,36 @@ export default function Header() {
               <p className="text-sm text-gray-600">Fianarantsoa, Madagascar</p>
             </div>
           </div>
+
+          {/* Navigation (authentifié) */}
+          {isAuthenticated && user && (
+            <nav className="hidden md:flex items-center gap-1">
+              <NavLink
+                to="/formulaire"
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`
+                }
+              >
+                Fiche technique
+              </NavLink>
+              <NavLink
+                to="/soutenance"
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`
+                }
+              >
+                Soutenance
+              </NavLink>
+            </nav>
+          )}
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">

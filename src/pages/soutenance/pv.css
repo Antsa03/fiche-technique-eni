@@ -1,0 +1,84 @@
+/* Styles du document PV — repris tels quels du projet CoreUI (front-2026). */
+
+/* Le document doit rester noir sur blanc (rendu PDF), format ~A4.
+   Aucune couleur oklch (Tailwind v4) ici : html2canvas ne sait pas les parser. */
+#pdf {
+  color: #000;
+  background: #fff;
+  width: 794px; /* ~210mm à 96dpi */
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+#pdf small {
+  font-size: 0.9em;
+}
+#pdf p {
+  color: #000;
+}
+
+/* Tailwind applique `border-border`/`outline-ring` (couleurs oklch) à TOUS les
+   éléments via @layer base. html2canvas ne sait pas parser oklch et échoue.
+   On neutralise ces couleurs sur toute la zone capturée (règles non-layered,
+   donc prioritaires sur @layer base). Les bordures visibles sont posées en
+   inline là où nécessaire (zone signature). */
+#pdf,
+#pdf * {
+  border-color: #cccccc;
+  outline-color: transparent;
+}
+
+.headerPV {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.headerPV .left {
+  text-align: left;
+  line-height: 1.2;
+}
+.headerPV .right {
+  text-align: right;
+}
+.titlePV {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: large;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.rowPV {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+.rowPV label {
+  min-width: 170px;
+}
+.rowPV strong {
+  min-width: 170px;
+}
+.rowPV p {
+  margin: 0;
+  flex: 1;
+}
+.label-critere {
+  font-size: medium;
+  font-weight: 500;
+  max-width: 170px;
+}
+
+/* Utilitaires Bootstrap/CoreUI absents de Tailwind, utilisés dans le JSX. */
+#pdf .fs-s {
+  font-size: 0.85rem;
+}
+#pdf .text-uppercase {
+  text-transform: uppercase;
+}
+#pdf .fw-bold {
+  font-weight: 700;
+}

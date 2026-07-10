@@ -170,3 +170,96 @@ export const getInscriptions = async (
 export const addFicheTechnique = async (data: any) => {
   return api.post('v1/formation/pratiques', data);
 };
+
+// ----- Soutenance : sélection de date + dépôt du mémoire -----
+
+// Stage (FormationPratique) de l'étudiant connecté, encadreur_pedagogique inclus.
+// Répond 404 si l'étudiant n'a aucune formation pratique.
+export const getMyFormationPratique = async () => {
+  return api.get("/v1/formation/pratiques/me");
+};
+
+// Liste des tranches horaires possibles (pour peupler le select).
+export const getTrancheHoraires = async () => {
+  return api.get("/v1/tranche-horaires");
+};
+
+// Vérifie si un enseignant (encadreur pédagogique) est disponible pour une
+// date + tranche horaire données. Répond { disponible: boolean }.
+// :id = sigle_ens de l'enseignant. code_tranche_horaire est un alias de heure.
+export const checkEnseignantDisponible = async (
+  id: string,
+  dateSoutenance: string,
+  codeTrancheHoraire: string
+) => {
+  return api.get(`/v1/enseignant/disponible/${encodeURIComponent(id)}`, {
+    params: {
+      date_soutenance: dateSoutenance,
+      code_tranche_horaire: codeTrancheHoraire,
+    },
+  });
+};
+
+// Liste des salles (pour construire la grille des disponibilités).
+export const getSalles = async () => {
+  return api.get("/v1/salles");
+};
+
+// Soutenances déjà posées à une date donnée. Sert à déduire les salles prises
+// et les créneaux où l'encadreur est déjà engagé (grille des disponibilités).
+// Le backend attend date_soutenance au format ISO (Date.toISOString()) ; si le
+// filtre est ignoré, le front refiltre par date côté client.
+export const getSoutenancesByDate = async (
+  dateSoutenanceISO: string,
+  limit = 50
+) => {
+  return api.get("/v1/soutenance", {
+    params: { limit, date_soutenance: dateSoutenanceISO },
+  });
+};
+
+// Flux étudiant : enregistre la date + tranche + salle choisie. Le backend
+// revalide la disponibilité de l'encadreur ET de la salle, crée/rejoue la
+// soutenance (tranche dans heure_soutenance, salle rattachée) et crée
+// automatiquement le rapporteur du jury (une Repartition dont l'enseignant est
+// l'encadreur pédagogique) — cf. backend-soutenance-prompt.md §4.
+export const chooseSoutenanceDate = async (data: Record<string, unknown>) => {
+  return api.post("/v1/soutenance/choisir-date", data);
+};
+
+// Soutenance existante d'une formation pratique (pour afficher/re-choisir,
+// afficher le jury, et savoir si un PV a été généré).
+export const getSoutenanceByFormation = async (formationPratiqueId: string) => {
+  return api.get("/v1/soutenance", {
+    params: { formation_pratique: formationPratiqueId },
+  });
+};
+
+// Historique des PV de soutenance de l'étudiant connecté.
+// TODO(backend): endpoint étudiant à créer (/pv est réservé au rôle rsm).
+export const getMesPvs = async () => {
+  return api.get("/v1/pv/me");
+};
+
+// Historique des mémoires déposés par l'étudiant connecté.
+// TODO(backend): nécessite de persister les dépôts de mémoire et d'exposer
+// cet endpoint (le mémoire n'est pas rattaché au modèle actuellement).
+export const getMesMemoires = async () => {
+  return api.get("/v1/formation/pratiques/me/memoires");
+};
+
+// Dépôt de la version finale du mémoire en PDF (multipart, champ "file").
+// Stocké dans ./files ; renvoie { file: { id, path } }. Aucun lien n'est
+// persisté sur la formation pratique côté backend.
+export const submitMemoire = async (
+  formationPratiqueId: string,
+  file: File
+) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return api.post(
+    `/v1/formation/pratiques/memoire/${encodeURIComponent(formationPratiqueId)}`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+};
