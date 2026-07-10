@@ -9,14 +9,36 @@ import {
   ScrollText,
 } from "lucide-react";
 import { useHistorique } from "../hooks/useHistorique";
-import { pickInscriptionEtudiant, resolveFileUrl } from "../utils";
+import {
+  formatEtudiant,
+  pickInscriptionEtudiant,
+  resolveFileUrl,
+} from "../utils";
 import AfficherPVSoutenance from "./AfficherPVSoutenance";
+import AccuseReceptionMemoire, {
+  type AccuseReceptionData,
+} from "./AccuseReceptionMemoire";
 import type {
   InscriptionContexte,
   MemoireHistoriqueItem,
   PvHistoriqueItem,
   PvRow,
 } from "../types";
+
+// Récépissé reconstitué depuis un mémoire de l'historique. La taille du fichier
+// n'est pas exposée par l'API historique, d'où son absence.
+const accuseFromMemoire = (
+  memoire: MemoireHistoriqueItem
+): AccuseReceptionData => ({
+  reference: memoire.file?.id ?? memoire.id,
+  etudiant: formatEtudiant(),
+  theme: memoire.theme ?? memoire.formation_pratique?.theme ?? "",
+  fileName:
+    memoire.file?.path?.split("/").pop() ??
+    memoire.path?.split("/").pop() ??
+    "Mémoire",
+  deposeLe: memoire.createdAt ?? "",
+});
 
 const formatDate = (iso?: string) => {
   if (!iso) return "";
@@ -93,7 +115,13 @@ const PvRow = ({
   );
 };
 
-const MemoireRow = ({ memoire }: { memoire: MemoireHistoriqueItem }) => (
+const MemoireRow = ({
+  memoire,
+  onViewAccuse,
+}: {
+  memoire: MemoireHistoriqueItem;
+  onViewAccuse: (m: MemoireHistoriqueItem) => void;
+}) => (
   <li className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
     <div className="min-w-0">
       <p className="truncate font-medium">
@@ -113,13 +141,26 @@ const MemoireRow = ({ memoire }: { memoire: MemoireHistoriqueItem }) => (
         </p>
       )}
     </div>
-    <DownloadLink href={resolveFileUrl(memoire.file, memoire.path)} />
+    <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => onViewAccuse(memoire)}
+        className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+      >
+        <Eye className="h-3.5 w-3.5" />
+        Accusé
+      </button>
+      <DownloadLink href={resolveFileUrl(memoire.file, memoire.path)} />
+    </div>
   </li>
 );
 
 export const HistoriqueSection = () => {
   const { pvs, memoires } = useHistorique();
   const [pvToShow, setPvToShow] = useState<PvRow | null>(null);
+  const [accuseToShow, setAccuseToShow] = useState<AccuseReceptionData | null>(
+    null
+  );
 
   // Si les deux endpoints d'historique sont indisponibles, on masque tout.
   if (pvs.unavailable && memoires.unavailable) return null;
@@ -188,7 +229,13 @@ export const HistoriqueSection = () => {
             ) : (
               <ul className="divide-y rounded-lg border">
                 {memoires.items.map((m) => (
-                  <MemoireRow key={m.id} memoire={m} />
+                  <MemoireRow
+                    key={m.id}
+                    memoire={m}
+                    onViewAccuse={(item) =>
+                      setAccuseToShow(accuseFromMemoire(item))
+                    }
+                  />
                 ))}
               </ul>
             )}
@@ -201,6 +248,14 @@ export const HistoriqueSection = () => {
           visible={!!pvToShow}
           setVisible={(v) => !v && setPvToShow(null)}
           row={pvToShow}
+        />
+      )}
+
+      {accuseToShow && (
+        <AccuseReceptionMemoire
+          visible={!!accuseToShow}
+          setVisible={(v) => !v && setAccuseToShow(null)}
+          data={accuseToShow}
         />
       )}
     </Card>

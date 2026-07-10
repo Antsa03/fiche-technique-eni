@@ -18,6 +18,18 @@ export const pickInscriptionEtudiant = <
   );
 };
 
+// Compose "Titre Nom Prénoms" à partir de l'utilisateur connecté. Le dépôt de
+// mémoire comme l'historique concernent l'étudiant connecté, d'où cette source
+// commune pour l'accusé de réception.
+export const formatEtudiant = (): string => {
+  const user = AuthService.getUser();
+  if (!user) return "";
+  return [user.titre?.description_titre, user.nom, user.prenoms]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+};
+
 // Résout l'URL téléchargeable d'un fichier renvoyé par l'API.
 // Les fichiers sont stockés côté backend (./files) ; on préfixe l'origine du
 // backend si le path est relatif. TODO(backend): confirmer comment les

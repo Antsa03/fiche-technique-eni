@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { dateToWords, getLettreNoteTotale } from "../pv-utils";
+import { overrideOklchVars } from "../pdf-utils";
 import type { EnseignantPV, PvRow } from "../types";
 import "../pv.css";
 
@@ -27,59 +28,6 @@ const PDFIcon = (
     />
   </svg>
 );
-
-// Remplace temporairement les variables de thème oklch (Tailwind v4) par des
-// rgb sur :root, le temps de la génération PDF (html2canvas ne parse pas oklch).
-// Retourne une fonction de restauration.
-const OKLCH_VAR_FALLBACKS: Record<string, string> = {
-  "--background": "#ffffff",
-  "--foreground": "#475569",
-  "--card": "#ffffff",
-  "--card-foreground": "#164e63",
-  "--popover": "#ffffff",
-  "--popover-foreground": "#475569",
-  "--primary": "#164e63",
-  "--primary-foreground": "#ffffff",
-  "--secondary": "#10b981",
-  "--secondary-foreground": "#ffffff",
-  "--muted": "#f8fafc",
-  "--muted-foreground": "#64748b",
-  "--accent": "#10b981",
-  "--accent-foreground": "#ffffff",
-  "--destructive": "#e53e3e",
-  "--destructive-foreground": "#ffffff",
-  "--border": "#d1d5db",
-  "--input": "#ffffff",
-  "--ring": "#164e63",
-  "--chart-1": "#3b82f6",
-  "--chart-2": "#10b981",
-  "--chart-3": "#eab308",
-  "--chart-4": "#ef4444",
-  "--chart-5": "#a855f7",
-  "--sidebar": "#f8fafc",
-  "--sidebar-foreground": "#475569",
-  "--sidebar-primary": "#164e63",
-  "--sidebar-primary-foreground": "#ffffff",
-  "--sidebar-accent": "#10b981",
-  "--sidebar-accent-foreground": "#ffffff",
-  "--sidebar-border": "#d1d5db",
-  "--sidebar-ring": "#10b981",
-};
-
-const overrideOklchVars = (): (() => void) => {
-  const root = document.documentElement;
-  const previous: Record<string, string> = {};
-  Object.entries(OKLCH_VAR_FALLBACKS).forEach(([key, value]) => {
-    previous[key] = root.style.getPropertyValue(key);
-    root.style.setProperty(key, value);
-  });
-  return () => {
-    Object.entries(previous).forEach(([key, value]) => {
-      if (value) root.style.setProperty(key, value);
-      else root.style.removeProperty(key);
-    });
-  };
-};
 
 // Zone de signature (remplace CFormInput disabled de CoreUI).
 // Styles inline uniquement : pas de classe Tailwind (couleurs oklch non

@@ -4,6 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Loader2, Upload, X } from "lucide-react";
 import { submitMemoire } from "@/services/api";
+import AccuseReceptionMemoire, {
+  type AccuseReceptionData,
+} from "./AccuseReceptionMemoire";
+import { formatEtudiant } from "../utils";
 import type { FormationPratique } from "../types";
 
 interface MemoireUploadSectionProps {
@@ -18,6 +22,8 @@ export const MemoireUploadSection = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [accuse, setAccuse] = useState<AccuseReceptionData | null>(null);
+  const [accuseVisible, setAccuseVisible] = useState(false);
 
   const pickFile = (selected: File | null) => {
     if (!selected) return;
@@ -36,7 +42,23 @@ export const MemoireUploadSection = ({
     if (!file) return;
     setIsSubmitting(true);
     try {
-      await submitMemoire(formationPratique.id, file);
+      const res = await submitMemoire(formationPratique.id, file);
+      // Le backend renvoie { file: { id, path } } ; l'id sert de référence de
+      // l'accusé. On se replie sur un horodatage local si l'id est absent.
+      const reference =
+        (res?.data?.file?.id as string | undefined) ??
+        `MEM-${Date.now().toString(36).toUpperCase()}`;
+
+      setAccuse({
+        reference,
+        etudiant: formatEtudiant(),
+        theme: formationPratique.theme,
+        fileName: file.name,
+        fileSizeMo: (file.size / 1024 / 1024).toFixed(2),
+        deposeLe: new Date().toISOString(),
+      });
+      setAccuseVisible(true);
+
       toast.success("Mémoire déposé avec succès !");
       setFile(null);
       if (inputRef.current) inputRef.current.value = "";
@@ -108,6 +130,25 @@ export const MemoireUploadSection = ({
           </div>
         )}
 
+        {accuse && (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+            <span>
+              Dépôt enregistré — référence{" "}
+              <strong>{accuse.reference}</strong>. Un accusé de réception est
+              disponible.
+            </span>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setAccuseVisible(true)}
+            >
+              <FileText className="h-4 w-4" />
+              Voir l&apos;accusé
+            </Button>
+          </div>
+        )}
+
         <div className="flex justify-end pt-2">
           <Button onClick={handleSubmit} disabled={!file || isSubmitting}>
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -115,6 +156,14 @@ export const MemoireUploadSection = ({
           </Button>
         </div>
       </CardContent>
+
+      {accuse && (
+        <AccuseReceptionMemoire
+          visible={accuseVisible}
+          setVisible={setAccuseVisible}
+          data={accuse}
+        />
+      )}
     </Card>
   );
 };
