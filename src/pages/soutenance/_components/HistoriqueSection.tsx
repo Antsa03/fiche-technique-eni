@@ -9,9 +9,10 @@ import {
   ScrollText,
 } from "lucide-react";
 import { useHistorique } from "../hooks/useHistorique";
-import { resolveFileUrl } from "../utils";
+import { pickInscriptionEtudiant, resolveFileUrl } from "../utils";
 import AfficherPVSoutenance from "./AfficherPVSoutenance";
 import type {
+  InscriptionContexte,
   MemoireHistoriqueItem,
   PvHistoriqueItem,
   PvRow,
@@ -27,6 +28,19 @@ const formatDate = (iso?: string) => {
     year: "numeric",
   });
 };
+
+// Année universitaire · Niveau · Parcours, à partir d'une inscription.
+const inscriptionMeta = (inscription?: InscriptionContexte | null) =>
+  [
+    inscription?.annee_universitaire?.code_au,
+    inscription?.niveau?.description_niveau ?? inscription?.niveau?.code_niveau,
+    inscription?.parcours?.description_parcours,
+  ].filter(Boolean);
+
+const InscriptionMeta = ({ meta }: { meta: (string | undefined)[] }) =>
+  meta.length > 0 ? (
+    <p className="text-xs text-muted-foreground">{meta.join(" · ")}</p>
+  ) : null;
 
 const DownloadLink = ({ href }: { href: string | null }) => {
   if (!href) return null;
@@ -49,37 +63,50 @@ const PvRow = ({
 }: {
   pv: PvHistoriqueItem;
   onView: (pv: PvHistoriqueItem) => void;
-}) => (
-  <li className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
-    <div className="min-w-0">
-      <p className="font-medium">
-        Soutenance du{" "}
-        {formatDate(pv.soutenance?.date_soutenance) || formatDate(pv.date_pv)}
-      </p>
-      <p className="text-xs text-muted-foreground">
-        {pv.note_pv != null ? `Note : ${pv.note_pv}/20` : "Note non disponible"}
-      </p>
-    </div>
-    <div className="flex items-center gap-3">
-      <button
-        type="button"
-        onClick={() => onView(pv)}
-        className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-      >
-        <Eye className="h-3.5 w-3.5" />
-        Voir
-      </button>
-      <DownloadLink href={resolveFileUrl(pv.file)} />
-    </div>
-  </li>
-);
+}) => {
+  return (
+    <li className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
+      <div className="min-w-0">
+        <p className="font-medium">
+          Soutenance du{" "}
+          {formatDate(pv.soutenance?.date_soutenance) || formatDate(pv.date_pv)}
+        </p>
+        <InscriptionMeta meta={inscriptionMeta(pv.inscription)} />
+        <p className="text-xs text-muted-foreground">
+          {pv.note_pv != null
+            ? `Note : ${pv.note_pv}/20`
+            : "Note non disponible"}
+        </p>
+      </div>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onView(pv)}
+          className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+        >
+          <Eye className="h-3.5 w-3.5" />
+          Voir
+        </button>
+        <DownloadLink href={resolveFileUrl(pv.file)} />
+      </div>
+    </li>
+  );
+};
 
 const MemoireRow = ({ memoire }: { memoire: MemoireHistoriqueItem }) => (
   <li className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
     <div className="min-w-0">
       <p className="truncate font-medium">
-        {memoire.theme || memoire.file?.path?.split("/").pop() || "Mémoire"}
+        {memoire.theme ||
+          memoire.formation_pratique?.theme ||
+          memoire.file?.path?.split("/").pop() ||
+          "Mémoire"}
       </p>
+      <InscriptionMeta
+        meta={inscriptionMeta(
+          pickInscriptionEtudiant(memoire.formation_pratique?.inscriptions)
+        )}
+      />
       {memoire.createdAt && (
         <p className="text-xs text-muted-foreground">
           Déposé le {formatDate(memoire.createdAt)}

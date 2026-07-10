@@ -10,6 +10,7 @@ import type {
   TrancheDisponibilite,
   TrancheHoraire,
 } from "../types";
+import { pickInscriptionEtudiant } from "../utils";
 
 const unwrap = <T,>(data: unknown): T[] => {
   const d = data as { data?: T[] } | T[] | null | undefined;
@@ -30,9 +31,12 @@ const juryName = (s: Soutenance, code: string) => {
   return fullName(m.enseignant?.user) || m.enseignant?.sigle_ens || "";
 };
 
-// Étudiant occupant la soutenance (1re inscription de la formation pratique).
+// Étudiant occupant la soutenance : l'inscription de l'étudiant connecté quand
+// c'est sa propre soutenance (seule affichée dans la grille), sinon la 1re.
 const etudiantName = (s: Soutenance) => {
-  const etu = s.formation_pratique?.inscriptions?.[0]?.etudiant;
+  const etu = pickInscriptionEtudiant(
+    s.formation_pratique?.inscriptions
+  )?.etudiant;
   if (!etu) return "";
   return `${etu.matricule ?? ""} ${fullName(etu.user)}`.trim();
 };

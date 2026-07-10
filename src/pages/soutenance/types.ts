@@ -114,6 +114,19 @@ export interface ApiFile {
   path: string;
 }
 
+// Contexte d'une inscription affiché dans l'historique : année universitaire,
+// niveau, parcours. `etudiant` permet de retrouver l'inscription de l'étudiant
+// connecté parmi celles d'une formation pratique (plusieurs stagiaires).
+export interface InscriptionContexte {
+  annee_universitaire?: { code_au?: string } | null;
+  niveau?: { code_niveau?: string; description_niveau?: string } | null;
+  parcours?: { description_parcours?: string } | null;
+  etudiant?: {
+    matricule?: string;
+    user?: { id?: string } | null;
+  } | null;
+}
+
 // Élément d'historique : PV de soutenance de l'étudiant.
 export interface PvHistoriqueItem {
   id: string;
@@ -121,15 +134,24 @@ export interface PvHistoriqueItem {
   note_pv: number | null;
   file?: ApiFile | null;
   soutenance?: { date_soutenance?: string } | null;
+  // Contexte de l'inscription rattachée au PV.
+  inscription?: InscriptionContexte | null;
 }
 
 // Élément d'historique : mémoire déposé par l'étudiant.
+// Le mémoire est rattaché à une formation pratique, elle-même liée à une (ou
+// plusieurs) inscription(s) — d'où l'on lit l'année universitaire, le niveau
+// et le parcours.
 export interface MemoireHistoriqueItem {
   id: string;
   createdAt?: string;
   theme?: string;
   file?: ApiFile | null;
   path?: string;
+  formation_pratique?: {
+    theme?: string;
+    inscriptions?: InscriptionContexte[] | null;
+  } | null;
 }
 
 // ----- Affichage du PV de soutenance (document officiel) -----
