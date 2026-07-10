@@ -171,6 +171,11 @@ export const addFicheTechnique = async (data: any) => {
   return api.post('v1/formation/pratiques', data);
 };
 
+// Mise à jour de la fiche technique (formation pratique) existante de l'étudiant.
+export const updateFicheTechnique = async (id: string, data: any) => {
+  return api.patch(`v1/formation/pratiques/${encodeURIComponent(id)}`, data);
+};
+
 // ----- Soutenance : sélection de date + dépôt du mémoire -----
 
 // Stage (FormationPratique) de l'étudiant connecté, encadreur_pedagogique inclus.

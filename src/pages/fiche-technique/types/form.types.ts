@@ -35,4 +35,6 @@ export interface FormActionsProps {
   onPrevious: () => void;
   onNext: () => void;
   onSubmit: () => void;
+  // Mode édition : adapte le libellé du bouton de soumission (mise à jour).
+  isEditMode?: boolean;
 }

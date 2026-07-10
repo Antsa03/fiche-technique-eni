@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { Loader2, PencilLine } from "lucide-react";
 import { STEPS } from "@/data/steps.data";
 import { PageLayout } from "./_components/layout/PageLayout";
 import { Stepper } from "./_components/stepper/Stepper";
@@ -13,10 +15,19 @@ import { RecapitulatifStep } from "./_components/steps/RecapitulatifStep";
 import { useFormValidation } from "./hooks/useFormValidation";
 import { useFormNavigation } from "./hooks/useFormNavigation";
 import { useFormHandlers } from "./hooks/useFormHandlers";
+import { useExistingFicheTechnique } from "./hooks/useExistingFicheTechnique";
+import { mapFormationPratiqueToFormData } from "./utils/mapFormationToForm";
 import { StagiaireStep } from "./_components/steps/StagiaireStep";
 
 
 export default function FicheTechniquePage() {
+  // Détection d'un stage existant : si l'étudiant en a déjà un, le formulaire
+  // passe en mode édition (pré-remplissage + mise à jour PATCH).
+  const { formationPratique, isLoading: isLoadingStage } =
+    useExistingFicheTechnique();
+  const isEditMode = Boolean(formationPratique);
+  const formationId = formationPratique?.id ?? null;
+
   // Form setup
   const form = useFormValidation();
   const {
@@ -26,12 +37,20 @@ export default function FicheTechniquePage() {
     getValues,
     setValue,
     watch,
+    reset,
     formState: { isSubmitting },
   } = form;
 
+  // Pré-remplit le formulaire avec les données du stage existant.
+  useEffect(() => {
+    if (formationPratique) {
+      reset(mapFormationPratiqueToFormData(formationPratique));
+    }
+  }, [formationPratique, reset]);
+
   // Navigation
   const { currentStep, completedSteps, nextStep, prevStep, goToStep } =
-    useFormNavigation({ trigger });
+    useFormNavigation({ trigger, unlockAll: isEditMode });
 
   // Handlers
   const {
@@ -40,7 +59,7 @@ export default function FicheTechniquePage() {
     handleEtablissementTypeChange,
     handleEncadreurTypeChange,
     onSubmit,
-  } = useFormHandlers({ setValue });
+  } = useFormHandlers({ setValue, formationId });
 
   // Watch values
   const etablissementType = watch("etablissement.type");
@@ -146,6 +165,17 @@ export default function FicheTechniquePage() {
     );
   };
 
+  // Pendant la vérification d'un stage existant, on évite d'afficher un
+  // formulaire vide qui serait ensuite réinitialisé.
+  if (isLoadingStage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center gap-2 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+        Chargement de votre fiche technique...
+      </div>
+    );
+  }
+
   return (
     <PageLayout
       currentStep={currentStep}
@@ -164,9 +194,19 @@ export default function FicheTechniquePage() {
           onPrevious={prevStep}
           onNext={nextStep}
           onSubmit={handleSubmit(onSubmit)}
+          isEditMode={isEditMode}
         />
       }
     >
+      {isEditMode && (
+        <div className="mb-3 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">
+          <PencilLine className="h-4 w-4 flex-shrink-0" />
+          <span>
+            Vous avez déjà un stage. Modifiez les informations ci-dessous puis
+            enregistrez pour mettre à jour votre fiche technique.
+          </span>
+        </div>
+      )}
       {renderStepContent()}
     </PageLayout>
   );

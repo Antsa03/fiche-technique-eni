@@ -6,13 +6,19 @@ import {
   resetEncadreurFields,
 } from "../utils/formUtils";
 import toast from "react-hot-toast";
-import { addFicheTechnique } from "@/services/api";
+import { addFicheTechnique, updateFicheTechnique } from "@/services/api";
 
 interface UseFormHandlersProps {
   setValue: any; // UseFormSetValue type from react-hook-form
+  // Mode édition : id de la formation pratique existante à mettre à jour (PATCH).
+  // null => mode création (POST).
+  formationId?: string | null;
 }
 
-export const useFormHandlers = ({ setValue }: UseFormHandlersProps) => {
+export const useFormHandlers = ({
+  setValue,
+  formationId = null,
+}: UseFormHandlersProps) => {
   const handleEtablissementExistantChange = useCallback(
     (etablissementId: string) => {
       fillEtablissementData(etablissementId, setValue);
@@ -103,17 +109,21 @@ export const useFormHandlers = ({ setValue }: UseFormHandlersProps) => {
 
     }
     try{
-      
-      await addFicheTechnique(formatedData)
-      toast.success("Fiche technique soumise avec succès !");
+      if (formationId) {
+        await updateFicheTechnique(formationId, formatedData);
+        toast.success("Fiche technique mise à jour avec succès !");
+      } else {
+        await addFicheTechnique(formatedData);
+        toast.success("Fiche technique soumise avec succès !");
+      }
       window.location.href = '/';
     }
     catch (error){
-      console.log(error);  
-      toast.error("Erreur d'envoi");
+      console.log(error);
+      toast.error(formationId ? "Erreur de mise à jour" : "Erreur d'envoi");
     }
-    
-  }, []);
+
+  }, [formationId]);
 
   return {
     handleEtablissementExistantChange,

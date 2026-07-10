@@ -10,8 +10,10 @@ export const FormActions = ({
   onPrevious,
   onNext,
   onSubmit,
+  isEditMode = false,
 }: FormActionsProps) => {
   const isLastStep = currentStep === totalSteps - 1;
+  const submittingLabel = isEditMode ? "Mise à jour..." : "Envoi...";
 
   return (
     <div className="mt-3 lg:mt-4 pt-3 border-t flex-shrink-0">
@@ -45,12 +47,12 @@ export const FormActions = ({
               {isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Envoi...
+                  {submittingLabel}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Envoyer
+                  {isEditMode ? "Mettre à jour" : "Envoyer"}
                 </>
               )}
             </Button>
@@ -96,12 +98,12 @@ export const FormActions = ({
             {isSubmitting ? (
               <>
                 <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1" />
-                Envoi...
+                {submittingLabel}
               </>
             ) : (
               <>
                 <Send className="h-3 w-3 mr-1" />
-                Confirmer et envoyer
+                {isEditMode ? "Mettre à jour" : "Confirmer et envoyer"}
               </>
             )}
           </Button>

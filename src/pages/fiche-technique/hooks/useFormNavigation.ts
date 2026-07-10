@@ -1,14 +1,26 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { STEPS } from "@/data/steps.data";
 import type { FormData } from "../types/form.types";
 
 interface UseFormNavigationProps {
   trigger: (field?: keyof FormData | (keyof FormData)[]) => Promise<boolean>;
+  // Mode édition : les étapes sont déjà renseignées, on les déverrouille toutes
+  // pour permettre une navigation libre.
+  unlockAll?: boolean;
 }
 
-export const useFormNavigation = ({ trigger }: UseFormNavigationProps) => {
+export const useFormNavigation = ({
+  trigger,
+  unlockAll = false,
+}: UseFormNavigationProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (unlockAll) {
+      setCompletedSteps(new Set(STEPS.map((_, index) => index)));
+    }
+  }, [unlockAll]);
 
   const validateCurrentStep = useCallback(async () => {
     // Skip validation for summary step
@@ -46,13 +58,13 @@ export const useFormNavigation = ({ trigger }: UseFormNavigationProps) => {
 
   const goToStep = useCallback(
     async (stepIndex: number) => {
-      if (stepIndex < currentStep || completedSteps.has(stepIndex)) {
+      if (unlockAll || stepIndex < currentStep || completedSteps.has(stepIndex)) {
         setCurrentStep(stepIndex);
       } else if (stepIndex === currentStep + 1) {
         await nextStep();
       }
     },
-    [currentStep, completedSteps, nextStep]
+    [currentStep, completedSteps, nextStep, unlockAll]
   );
 
   return {

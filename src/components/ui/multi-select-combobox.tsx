@@ -184,7 +184,14 @@ export function MultiSelectCombobox({
     if (!isOpen) return null;
 
     // Utiliser les options filtrées ou toutes les options selon la présence d'onSearchChange
-    const displayOptions = onSearchChange ? options : filteredOptions;
+    const baseOptions = onSearchChange ? options : filteredOptions;
+    // Toujours inclure les éléments déjà sélectionnés (ex. stagiaires qui ont
+    // déjà fait le stage en mode édition) même si l'API ne les renvoie pas dans
+    // ses options : ils apparaissent ainsi cochés et restent désélectionnables.
+    const displayOptions = [
+      ...value.filter((v) => !baseOptions.includes(v)),
+      ...baseOptions,
+    ];
 
     return (
       <div
