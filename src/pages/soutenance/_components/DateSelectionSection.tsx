@@ -8,6 +8,9 @@ import {
   CalendarCheck,
   CalendarClock,
   Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
   Loader2,
   Lock,
   UserX,
@@ -30,6 +33,15 @@ interface DateSelectionSectionProps {
 }
 
 const todayISO = () => new Date().toISOString().split("T")[0];
+
+// Décale une date ISO (YYYY-MM-DD) de N jours, en restant sur le fuseau local.
+const shiftISODate = (iso: string, days: number) => {
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, m - 1, d + days);
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const dd = String(dt.getDate()).padStart(2, "0");
+  return `${dt.getFullYear()}-${mm}-${dd}`;
+};
 
 const formatDate = (iso: string) => {
   const d = new Date(iso);
@@ -100,6 +112,11 @@ export const DateSelectionSection = ({
     setCreneau(null);
   };
 
+  // Navigation date : on ne recule pas avant aujourd'hui.
+  const canGoPrev = date > todayISO();
+  const goPrev = () => canGoPrev && handleDateChange(shiftISODate(date, -1));
+  const goNext = () => handleDateChange(shiftISODate(date, 1));
+
   const handleConfirm = async () => {
     if (!canConfirm || !creneau) return;
     setIsSubmitting(true);
@@ -111,7 +128,10 @@ export const DateSelectionSection = ({
         // Le backend stocke la salle dans `lieu` (= num_salle), pas dans un objet.
         lieu: creneau.num_salle,
       });
-      toast.success("Date et salle de soutenance enregistrées !");
+      toast.success(
+        "Créneau envoyé ! En attente de la confirmation de la scolarité.",
+        { duration: 6000 }
+      );
       setCreneau(null);
       loadExisting();
       reload();
@@ -154,11 +174,17 @@ export const DateSelectionSection = ({
               {existing.heure_soutenance && ` — ${existing.heure_soutenance}`}
               {existingSalle && ` — ${existingSalle}`}
             </span>
-            {!isLocked && (
-              <span className="ml-auto text-xs text-blue-600">
-                Vous pouvez la modifier ci-dessous
-              </span>
-            )}
+          </div>
+        )}
+
+        {/* En attente de la confirmation de la scolarité (encore modifiable) */}
+        {existing?.date_soutenance && !isLocked && (
+          <div className="flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
+            <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+            <p>
+              Votre date a bien été envoyée. Elle est{" "}
+              <strong>en attente de la confirmation de la scolarité</strong>.
+            </p>
           </div>
         )}
 
@@ -169,7 +195,7 @@ export const DateSelectionSection = ({
             <p>
               {pvGenerated
                 ? "La soutenance est terminée (procès-verbal généré) : la date ne peut plus être modifiée."
-                : "Le jury a été attribué par la scolarité : la date ne peut plus être modifiée."}
+                : "Votre soutenance a été confirmée par la scolarité (jury attribué) : la date ne peut plus être modifiée."}
             </p>
           </div>
         )}
@@ -182,15 +208,38 @@ export const DateSelectionSection = ({
         {/* Choix de la date + grille des disponibilités (masqués si verrouillé) */}
         {!isLocked && (
           <>
-            <div className="space-y-1.5 max-w-xs">
-              <Label htmlFor="date-soutenance">Date</Label>
-              <Input
-                id="date-soutenance"
-                type="date"
-                min={todayISO()}
-                value={date}
-                onChange={(e) => handleDateChange(e.target.value)}
-              />
+            {/* Sélecteur de date centré et fixe (reste visible au scroll) */}
+            <div className="sticky top-0 z-30 -mx-6 flex flex-col items-center gap-1.5 border-b bg-white/95 px-6 py-3 backdrop-blur">
+              <Label htmlFor="date-soutenance">Date de la soutenance</Label>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={goPrev}
+                  disabled={!canGoPrev}
+                  title="Jour précédent"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Input
+                  id="date-soutenance"
+                  type="date"
+                  min={todayISO()}
+                  value={date}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  className="w-44 text-center"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={goNext}
+                  title="Jour suivant"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             {date && (
@@ -203,12 +252,16 @@ export const DateSelectionSection = ({
               />
             )}
 
+            {/* Barre de confirmation : reste visible même en scrollant */}
             {creneau && (
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div className="sticky bottom-0 z-20 -mx-6 flex flex-wrap items-center justify-between gap-2 border-t bg-white/95 px-6 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] backdrop-blur">
                 <p className="text-sm text-muted-foreground">
                   Créneau sélectionné :{" "}
                   <span className="font-medium text-foreground">
-                    {creneau.num_salle}
+                    {creneau.libelle_tranche_horaire ??
+                      creneau.code_tranche_horaire}{" "}
+                    · {creneau.num_salle} ·{" "}
+                    <span className="capitalize">{formatDate(date)}</span>
                   </span>
                 </p>
                 <Button onClick={handleConfirm} disabled={!canConfirm}>
@@ -233,14 +286,6 @@ interface DisponibilitesGridProps {
   creneau: CreneauChoisi | null;
   onSelect: (c: CreneauChoisi) => void;
 }
-
-// Cellule d'un membre du jury / étudiant : le nom, ou un tiret discret si vide.
-const PersonCell = ({ value }: { value?: string }) =>
-  value ? (
-    <span>{value}</span>
-  ) : (
-    <span className="text-gray-300">—</span>
-  );
 
 const DisponibilitesGrid = ({
   tranches,
@@ -275,18 +320,28 @@ const DisponibilitesGrid = ({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border">
+    <div className="max-h-[60vh] overflow-auto rounded-lg border">
       <table className="w-full border-collapse text-sm whitespace-nowrap">
         <thead>
-          <tr className="bg-indigo-500 text-white text-left">
-            <th className="px-3 py-2 font-semibold">Heure</th>
-            <th className="px-3 py-2 font-semibold">Salle</th>
-            <th className="px-3 py-2 font-semibold">Étudiant</th>
-            <th className="px-3 py-2 font-semibold">Encadreur</th>
-            <th className="px-3 py-2 font-semibold">Rapporteur</th>
-            <th className="px-3 py-2 font-semibold">Président</th>
-            <th className="px-3 py-2 font-semibold">Examinateur</th>
-            <th className="px-3 py-2 font-semibold text-right">Action</th>
+          <tr className="text-left text-white">
+            <th className="sticky top-0 z-10 bg-indigo-500 px-3 py-2 font-semibold">
+              Heure
+            </th>
+            <th className="sticky top-0 z-10 bg-indigo-500 px-3 py-2 font-semibold">
+              Salle
+            </th>
+            <th className="sticky top-0 z-10 bg-indigo-500 px-3 py-2 font-semibold">
+              Étudiant
+            </th>
+            <th className="sticky top-0 z-10 bg-indigo-500 px-3 py-2 font-semibold">
+              Encadreur
+            </th>
+            <th className="sticky top-0 z-10 bg-indigo-500 px-3 py-2 font-semibold">
+              Rapporteur
+            </th>
+            <th className="sticky top-0 z-10 bg-indigo-500 px-3 py-2 font-semibold text-right">
+              Action
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -300,7 +355,7 @@ const DisponibilitesGrid = ({
                   <td className="px-3 py-2 font-medium align-top">{label}</td>
                   <td
                     className="px-3 py-2 text-muted-foreground italic"
-                    colSpan={7}
+                    colSpan={5}
                   >
                     Aucune salle
                   </td>
@@ -309,12 +364,17 @@ const DisponibilitesGrid = ({
             }
 
             return salles.map((s, idx) => {
+              const occupied = !s.disponible;
               const selectable = t.encadreur_disponible && s.disponible;
               const selected = isSameCreneau(
                 creneau,
                 t.code_tranche_horaire,
                 s.num_salle
               );
+              // On n'affiche jamais les infos des AUTRES : seule la soutenance
+              // de l'étudiant connecté montre ses détails ; les autres cases
+              // occupées sont simplement grisées.
+              const showInfo = occupied && s.is_own;
 
               return (
                 <tr
@@ -325,13 +385,15 @@ const DisponibilitesGrid = ({
                       ? "bg-emerald-50"
                       : s.is_own
                       ? "bg-blue-50"
+                      : occupied
+                      ? "bg-gray-100 text-gray-400"
                       : "",
                     selectable && !selected ? "hover:bg-gray-50" : "",
                   ].join(" ")}
                 >
                   {idx === 0 && (
                     <td
-                      className="px-3 py-2 font-medium align-top"
+                      className="px-3 py-2 font-medium align-top text-foreground"
                       rowSpan={salles.length}
                     >
                       <div>{label}</div>
@@ -345,25 +407,15 @@ const DisponibilitesGrid = ({
                   )}
                   <td className="px-3 py-2 font-medium">{s.num_salle}</td>
                   <td className="px-3 py-2">
-                    <PersonCell value={s.etudiant} />
+                    {showInfo && s.etudiant}
                     {s.is_own && (
                       <span className="ml-1 rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
                         Vous
                       </span>
                     )}
                   </td>
-                  <td className="px-3 py-2">
-                    <PersonCell value={s.encadreur} />
-                  </td>
-                  <td className="px-3 py-2">
-                    <PersonCell value={s.rapporteur} />
-                  </td>
-                  <td className="px-3 py-2">
-                    <PersonCell value={s.president} />
-                  </td>
-                  <td className="px-3 py-2">
-                    <PersonCell value={s.examinateur} />
-                  </td>
+                  <td className="px-3 py-2">{showInfo ? s.encadreur : ""}</td>
+                  <td className="px-3 py-2">{showInfo ? s.rapporteur : ""}</td>
                   <td className="px-3 py-2 text-right">
                     {selected ? (
                       <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
@@ -383,6 +435,7 @@ const DisponibilitesGrid = ({
                         onClick={() =>
                           onSelect({
                             code_tranche_horaire: t.code_tranche_horaire,
+                            libelle_tranche_horaire: t.libelle_tranche_horaire,
                             num_salle: s.num_salle,
                           })
                         }
@@ -390,8 +443,8 @@ const DisponibilitesGrid = ({
                         Choisir
                       </Button>
                     ) : (
-                      <span className="text-xs text-muted-foreground">
-                        Occupée
+                      <span className="text-xs">
+                        {s.is_own ? "Votre soutenance" : "Occupée"}
                       </span>
                     )}
                   </td>

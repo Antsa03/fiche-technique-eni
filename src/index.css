@@ -122,5 +122,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Évite la barre horizontale due aux sections pleine largeur (100vw) tout
+       en gardant le scroll vertical sur le body (pour que `sticky` fonctionne). */
+    overflow-x: hidden;
   }
 }

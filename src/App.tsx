@@ -5,6 +5,7 @@ import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
 import FicheTechniquePage from "./pages/fiche-technique";
 import SoutenancePage from "./pages/soutenance";
+import SoutenanceHistoriquePage from "./pages/soutenance/historique";
 import LoginPage from "./pages/login";
 import ForgotPasswordPage from "./pages/forgot-password";
 import { ProtectedRoute } from "./components/protected-route";
@@ -32,6 +33,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SoutenancePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/soutenance/historique"
+              element={
+                <ProtectedRoute>
+                  <SoutenanceHistoriquePage />
                 </ProtectedRoute>
               }
             />

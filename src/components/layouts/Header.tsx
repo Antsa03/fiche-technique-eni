@@ -77,6 +77,7 @@ export default function Header() {
               </NavLink>
               <NavLink
                 to="/soutenance"
+                end
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive
@@ -86,6 +87,18 @@ export default function Header() {
                 }
               >
                 Soutenance
+              </NavLink>
+              <NavLink
+                to="/soutenance/historique"
+                className={({ isActive }) =>
+                  `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`
+                }
+              >
+                Historique
               </NavLink>
             </nav>
           )}

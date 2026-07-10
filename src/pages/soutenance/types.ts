@@ -55,9 +55,11 @@ export interface TrancheDisponibilite {
   salles: SalleDisponibilite[];
 }
 
-// Créneau choisi par l'étudiant dans la grille (tranche + salle libre).
+// Créneau choisi par l'étudiant dans la grille : tranche horaire (+ libellé
+// lisible) et salle. La date est celle sélectionnée au-dessus de la grille.
 export interface CreneauChoisi {
   code_tranche_horaire: string;
+  libelle_tranche_horaire?: string;
   num_salle: string;
 }
 
